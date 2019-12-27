@@ -1,13 +1,7 @@
 MORO2020
 Charger using ESP32
 
-* Subject one
-* Subject two
-  * Sub1
-  * Sub2
-  
-  [GitHub](http://github.com)
-  
-  
-  I think you should use an
-`<addr>` element here instead.
+Версия печатной платы MORO2020v43 (моноплата второй редакции)
+Предназначена для установки цветного дисплея 128*128 или 128*160
+Светодиода RGB нет.
+

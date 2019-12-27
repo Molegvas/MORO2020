@@ -1,6 +1,9 @@
 /*
-
-
+    Конечный автомат обработки данных АЦП:
+    напряжения с выбором диапазона,
+    тока (пока выбора входа нет),
+    температуры,
+    выбора кнопки.
 */
 #include "measure/mmeasure.h"
 #include "mtools.h"
@@ -43,7 +46,8 @@ namespace MMeasureStates
             if( Board->getRangeV() == 0 )
             {
                 // ADC_11db, accounting voltageDivider
-                volt = 0.00648631f * (float)averageV + 1.11803782f;
+                volt = 0.0064863f * averageV + 1.1180378f;
+
         //        Serial.println( volt );
                 Board->calcVoltage( volt );
                 if( volt <= 5.0f ) {
@@ -55,8 +59,7 @@ namespace MMeasureStates
             else
             {
                 // ADC_0db, accounting voltageDivider
-    //            volt = -0.00000001f * (float)pow( averageV, 2 ) + 0.00191662f * (float)averageV + 0.58680987f;
-    volt = -0.00000001f * (float)( averageV * averageV ) + 0.00191662f * (float)averageV + 0.58680987f;
+                volt = 0.0019166f * averageV + 0.5868099f;
 
         //        Serial.println( volt );
                 Board->calcVoltage( volt );

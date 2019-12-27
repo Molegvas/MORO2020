@@ -1,0 +1,51 @@
+{
+    "name": "AutoPID", 
+    "version": "1.0.3", 
+    "keywords": [
+        "signal", 
+        "input", 
+        "output"
+    ], 
+    "description": "Automatic PID controller", 
+    "frameworks": [
+        "arduino"
+    ], 
+    "platforms": [
+        "atmelavr", 
+        "atmelsam", 
+        "espressif32", 
+        "espressif8266", 
+        "intel_arc32", 
+        "microchippic32", 
+        "nordicnrf51", 
+        "nordicnrf52", 
+        "ststm32", 
+        "teensy", 
+        "timsp430"
+    ], 
+    "authors": [
+        {
+            "email": null, 
+            "url": null, 
+            "maintainer": true, 
+            "name": "Ryan Downing"
+        }
+    ], 
+    "repository": {
+        "type": "git", 
+        "url": "https://github.com/r-downing/AutoPID"
+    }, 
+    "homepage": "https://r-downing.github.io/AutoPID/", 
+    "export": {
+        "include": null, 
+        "exclude": [
+            "extras", 
+            "docs", 
+            "tests", 
+            "test", 
+            "*.doxyfile", 
+            "*.pdf"
+        ]
+    }, 
+    "id": 1925
+}

@@ -20,35 +20,63 @@ namespace CcCvFsm
     // Состояние "Старт", инициализация выбранного режима работы (Заряд CCCV).
     MStart::MStart(MTools * Tools) : MState(Tools)
     {
-        // Параметры заряда из энергонезависимой памяти, при первом включении - заводские
-        Tools->setVoltageMax( Tools->readNvsFloat("cccv", "voltMax", 14.5f) );
-        Tools->setVoltageMin( Tools->readNvsFloat("cccv", "voltMin", 13.2f) );
-        Tools->setCurrentMax( Tools->readNvsFloat("cccv", "currMax",  5.0f) );
-        Tools->setCurrentMin( Tools->readNvsFloat("cccv", "currMin",  0.5f) );
+        // Параметры заряда из энергонезависимой памяти, Занесенные в нее при предыдущих включениях, как и
+        // выбранные ранее номинальные параметры батареи (напряжение, емкость).
+        // При первом включении, как правило заводском, номиналы батареи задаются в mdispather.h. 
+        Tools->setVoltageMax( Tools->readNvsFloat("cccv", "voltMax", MChConsts::voltageMaxFactor * Tools->getVoltageNom()) );
+        Tools->setVoltageMin( Tools->readNvsFloat("cccv", "voltMin", MChConsts::voltageMinFactor * Tools->getVoltageNom()) );
+        Tools->setCurrentMax( Tools->readNvsFloat("cccv", "currMax", MChConsts::currentMaxFactor * Tools->getCapacity()) );
+        Tools->setCurrentMin( Tools->readNvsFloat("cccv", "currMin", MChConsts::currentMinFactor * Tools->getCapacity()) );
 
         // Индикация
-        Oled->showLine4Text("   Зарядное  ");
-        Oled->showLine3Akb( Tools->getVoltageNom(), Tools->getCapacity() );              // example: "  12В  55Ач  "
-        Oled->showLine2Text(" P-корр.С-старт ");        // Подсказка: активны две кнопки: P-сменить настройки, и C-старт
-        Oled->showLine1Time(0);                         // уточнить
-        Oled->showLine1Ah(0.0);                         // уточнить
-        Board->ledsOn();                                // Светодиод светится белым до старта заряда - режим выбран
+        #ifdef OLED_1_3
+            Oled->showLine4Text("   Зарядное  ");
+            Oled->showLine3Akb( Tools->getVoltageNom(), Tools->getCapacity() );              // example: "  12В  55Ач  "
+            Oled->showLine2Text(" P-корр.С-старт ");        // Подсказка: активны две кнопки: P-сменить настройки, и C-старт
+            Oled->showLine1Time(0);                         // уточнить
+            Oled->showLine1Ah(0.0);                         // уточнить
+            Board->ledsOn();                                // Светодиод светится белым до старта заряда - режим выбран
+        #endif
+        #ifdef TFT_1_44
+            // no leds
+        #endif
+        #ifdef TFT_1_8
+            // no leds
+        #endif
     }
     MState * MStart::fsm()
     {
-        if( Keyboard->getKey(MKeyboard::C_CLICK)) 
-        {
-            // Старт без уточнения параметров (здесь – для батарей типа AGM), 
-            // максимальный ток и напряжение окончания - паспортные, исходя из параметров АКБ 
-            // Выбор АКБ производится в "Настройках".
-            Tools->setVoltageMax( Tools->getVoltageNom() * 1.234f );                // Например, voltageMax = 14.8;
-            Tools->setCurrentMax( Tools->getCapacity() * 0.20f );
-            Tools->setVoltageMin( Tools->getVoltageNom() * 0.89f );
-            Tools->setCurrentMin( Tools->getCapacity() * 0.05f );
-            return new MPostpone(Tools);
-        }
+        // if( Keyboard->getKey(MKeyboard::C_CLICK)) 
+        // {
+        //     // Старт без уточнения параметров (здесь – для батарей типа AGM), 
+        //     // максимальный ток и напряжение окончания - паспортные, исходя из параметров АКБ 
+        //     // Выбор АКБ производится в "Настройках".
+        //     Tools->setVoltageMax( Tools->getVoltageNom() * 1.234f );                // Например, voltageMax = 14.8;
+        //     Tools->setCurrentMax( Tools->getCapacity() * 0.20f );
+        //     Tools->setVoltageMin( Tools->getVoltageNom() * 0.89f );
+        //     Tools->setCurrentMin( Tools->getCapacity() * 0.05f );
+        //     return new MPostpone(Tools);
+        // }
 
-        if( Keyboard->getKey(MKeyboard::P_CLICK)) { return new MSetFactory(Tools); }      // Выбрано уточнение настроек заряда.
+        // if( Keyboard->getKey(MKeyboard::P_CLICK)) { return new MSetFactory(Tools); }      // Выбрано уточнение настроек заряда.
+
+        switch ( Keyboard->getKey() )    //Здесь так можно
+        {
+            case MKeyboard::C_CLICK :
+                // Старт без уточнения параметров (здесь – для батарей типа AGM), 
+                // максимальный ток и напряжение окончания - паспортные, исходя из параметров АКБ 
+                // Выбор АКБ производится в "Настройках".
+                        // MChConsts::xxxFactor * Tools->getXxxx(),
+
+                Tools->setVoltageMax( MChConsts::voltageMaxFactor * Tools->getVoltageNom() );    // Например, voltageMax = 14.8;
+                Tools->setVoltageMin( MChConsts::voltageMinFactor * Tools->getVoltageNom() );
+                Tools->setCurrentMax( MChConsts::currentMaxFactor * Tools->getCapacity() );
+                Tools->setCurrentMin( MChConsts::currentMinFactor * Tools->getCapacity() );
+                return new MPostpone(Tools);
+            case MKeyboard::P_CLICK :
+                return new MSetFactory(Tools);      // Выбрано уточнение настроек заряда.
+            default:;
+        }
 
         return this;
     };
@@ -57,25 +85,49 @@ namespace CcCvFsm
     MSetFactory::MSetFactory(MTools * Tools) : MState(Tools)
     {
         // Индикация
-        Oled->showLine4Text("   Factory   ");
-        Oled->showLine3Text("     Y/NO    ");
-        Oled->showLine2Text("  B-yes,  C-no  ");
+        #ifdef OLED_1_3
+            Oled->showLine4Text("   Factory   ");
+            Oled->showLine3Text("     Y/NO    ");
+            Oled->showLine2Text("  B-yes,  C-no  ");
+        #endif
+
+        #ifdef TFT_1_44
+            // no leds
+        #endif
+        #ifdef TFT_1_8
+            // no leds
+        #endif
     }
     MState * MSetFactory::fsm()
     {
-        if ( Keyboard->getKey(MKeyboard::C_CLICK)) { return new MSetCurrentMax(Tools); }  // Отказ в восстановлении заводских параметров.
+        // if ( Keyboard->getKey(MKeyboard::C_CLICK)) { return new MSetCurrentMax(Tools); }  // Отказ в восстановлении заводских параметров.
 
-        // Восстановление заводских параметров режима заряда.
-        if( Keyboard->getKey(MKeyboard::B_CLICK))
+        // // Восстановление заводских параметров режима заряда.
+        // if( Keyboard->getKey(MKeyboard::B_CLICK))
+        // {
+        //     Tools->clearAllKeys("cccv");                                            // Очистка в энергонезависимой памяти.
+
+        //     // Восстановление параметров заряда (после очистки – дефолтными значениями).
+        //     Tools->setVoltageMax( Tools->readNvsFloat("cccv", "voltMax", 14.5f) );
+        //     Tools->setVoltageMin( Tools->readNvsFloat("cccv", "voltMin", 13.2f) );
+        //     Tools->setCurrentMax( Tools->readNvsFloat("cccv", "currMax",  5.0f) );
+        //     Tools->setCurrentMin( Tools->readNvsFloat("cccv", "currMin",  0.5f) );
+        //     return new MSetCurrentMax(Tools);
+        // }
+        switch ( Keyboard->getKey() )
         {
-            Tools->clearAllKeys("cccv");                                            // Очистка в энергонезависимой памяти.
+            case MKeyboard::C_CLICK :
+                return new MSetCurrentMax(Tools);           // Отказ в восстановлении заводских параметров.
+            case MKeyboard::B_CLICK :
+                Tools->clearAllKeys("cccv");                // Очистка в энергонезависимой памяти.
 
-            // Восстановление параметров заряда (после очистки – дефолтными значениями).
-            Tools->setVoltageMax( Tools->readNvsFloat("cccv", "voltMax", 14.5f) );
-            Tools->setVoltageMin( Tools->readNvsFloat("cccv", "voltMin", 13.2f) );
-            Tools->setCurrentMax( Tools->readNvsFloat("cccv", "currMax",  5.0f) );
-            Tools->setCurrentMin( Tools->readNvsFloat("cccv", "currMin",  0.5f) );
-            return new MSetCurrentMax(Tools);
+                // Восстановление параметров заряда (после очистки – дефолтными значениями).
+                Tools->setVoltageMax( Tools->readNvsFloat("cccv", "voltMax", MChConsts::voltageMaxFactor * Tools->getVoltageNom()) );
+                Tools->setVoltageMin( Tools->readNvsFloat("cccv", "voltMin", MChConsts::voltageMinFactor * Tools->getVoltageNom()) );
+                Tools->setCurrentMax( Tools->readNvsFloat("cccv", "currMax", MChConsts::currentMaxFactor * Tools->getCapacity()) );
+                Tools->setCurrentMin( Tools->readNvsFloat("cccv", "currMin", MChConsts::currentMinFactor * Tools->getCapacity()) );
+                return new MSetCurrentMax(Tools);
+            default:;
         }
 
         return this;
@@ -85,9 +137,11 @@ namespace CcCvFsm
     MSetCurrentMax::MSetCurrentMax(MTools * Tools) : MState(Tools)
     {
         // Индикация
-        Oled->showLine4Text(" Imax заряда ");
-        Oled->showLine3MaxI( Tools->getCurrentMax() );
-        Tools->showUpDn(); // " UP/DN, В-выбор "
+        #ifdef OLED_1_3
+            Oled->showLine4Text(" Imax заряда ");
+            Oled->showLine3MaxI( Tools->getCurrentMax() );
+            Tools->showUpDn(); // " UP/DN, В-выбор "
+        #endif
     }
     MState * MSetCurrentMax::fsm()
     {
@@ -108,35 +162,36 @@ namespace CcCvFsm
         if( Keyboard->getKey(MKeyboard::DN_LONG_CLICK)) { Tools->decCurrentMax( 0.5f, false ); return this; } 
         */
 
-        switch ( Keyboard->getKey() )    //Здесь так можно
+        switch ( Keyboard->getKey() )
         {
-            case MKeyboard::C_LONG_CLICK :
+            case MKeyboard::C_LONG_CLICK :                   // Отказ от продолжения ввода параметров - стоп
                 return new MStop(Tools);
-            case MKeyboard::C_CLICK :
+            case MKeyboard::C_CLICK :                       // Отказ от дальнейшего ввода параметров - исполнение
                 return new MPostpone(Tools);
-            case MKeyboard::B_CLICK :
+            case MKeyboard::B_CLICK :                       // Сохранить и перейти к следующему параметру
                 Tools->saveFloat( "cccv", "currMax", Tools->getCurrentMax() ); 
                 return new MSetVoltageMax(Tools);
 
             case MKeyboard::UP_CLICK :
-                Tools->incCurrentMax( 0.1f, false );
+                Tools->incCurrentMax( 0.1f, false );        // По кольцу? - Нет
                 break;
             case MKeyboard::DN_CLICK:
                 Tools->decCurrentMax( 0.1f, false );
                 break;
-            case MKeyboard::UP_LONG_CLICK:
-                Tools->incCurrentMax( 0.5f, false );
+            case MKeyboard::UP_AUTO_CLICK:
+                Tools->incCurrentMax( 0.1f, false );
                 break;
-            case MKeyboard::DN_LONG_CLICK:
-                Tools->decCurrentMax( 0.5f, false );
+            case MKeyboard::DN_AUTO_CLICK:
+                Tools->decCurrentMax( 0.1f, false );
                 break;
             default:;
         }
-
-        Oled->showLine3MaxI( Tools->getCurrentMax() );
+        #ifdef OLED_1_3
+            Oled->showLine3MaxI( Tools->getCurrentMax() );
+        #endif
         return this;
     };
-
+// **************************************************************************************
     // Коррекция максимального напряжения.
     MSetVoltageMax::MSetVoltageMax(MTools * Tools) : MState(Tools)
     {

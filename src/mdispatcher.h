@@ -33,9 +33,7 @@ class MDispatcher
     #ifdef STORAGE_ENABLE
       STORAGE,    // режим хранения
     #endif
-//    #ifdef SERVICE_ENABLE
       SERVICE     // режим Сервис АКБ
-//    #endif
     };
 
   public:

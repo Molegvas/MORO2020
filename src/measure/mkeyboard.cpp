@@ -4,16 +4,16 @@
 
 MKeyboard::MKeyboard()
 {
-    //                                              tm1 - таймаут дребезга контактов. По умолчанию 50мс  - требует уточнения - moro: проверено с =0, ОК
-    //                                                      tm2 - время длинного нажатия клавиши. По умолчанию 2000мс
-    //                                                              tm3 - время перевода кнопки в генерацию серии нажатий. По умолчанию отключено
-    //                                                                      tm4 - время между кликами в серии. По умолчанию 500 мс. Если tm3 = 0 то не работает
-
-    SButton * keyP  = new SButton( &KeyInput, adc_p,   0,   1000,      0,  500);
-    SButton * keyUp = new SButton( &KeyInput, adc_up,  0,   1000,   2000, 1000);
-    SButton * keyDn = new SButton( &KeyInput, adc_dn,  0,   1000,   2000, 1000);
-    SButton * keyC  = new SButton( &KeyInput, adc_c,   0,   1000,      0,  500);
-    SButton * keyB  = new SButton( &KeyInput, adc_b,   0,   1000,      0, 1000);
+    // tm1 - таймаут дребезга контактов. По умолчанию 50мс  - требует уточнения - moro: проверено с =0, ОК
+    // tm2 - время длинного нажатия клавиши. По умолчанию 2000мс
+    // tm3 - время перевода кнопки в генерацию серии нажатий. По умолчанию отключено
+    // tm4 - время между кликами в серии. По умолчанию 500 мс. Если tm3 = 0 то не работает
+    //                                                tm1     tm2     tm3     tm4
+    SButton * keyP  = new SButton( &KeyInput, adc_p,    0,   1000,      0,    500);
+    SButton * keyUp = new SButton( &KeyInput, adc_up,   0,    500,   1000,    500);
+    SButton * keyDn = new SButton( &KeyInput, adc_dn,   0,    500,   1000,    500);
+    SButton * keyC  = new SButton( &KeyInput, adc_c,    0,   1000,      0,    500);
+    SButton * keyB  = new SButton( &KeyInput, adc_b,    0,   1000,      0,    500);
 
     Buttons[0] = new MButton(keyP,  P_CLICK,  P_LONG_CLICK,  P_AUTO_CLICK,  "P");
     Buttons[1] = new MButton(keyUp, UP_CLICK, UP_LONG_CLICK, UP_AUTO_CLICK, "UP");

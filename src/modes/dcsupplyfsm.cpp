@@ -202,11 +202,11 @@ namespace DcSupplyFsm
     MState * MExecution::fsm()
     {
         Tools->chargeCalculations();
-        // Регулировка напряжения "на лету"
+        //Регулировка напряжения "на лету"
         if(Keyboard->getKey(MKeyboard::UP_CLICK)) { Tools->incVoltagePow( 0.1f, false ); Tools->liveU(); }  // Добавить 100 мB
         if(Keyboard->getKey(MKeyboard::DN_CLICK)) { Tools->decVoltagePow( 0.1f, false ); Tools->liveU(); }  // Убавить  100 мB
-        if(Keyboard->getKey(MKeyboard::UP_LONG_CLICK)) { Tools->incVoltagePow( 0.5f, false ); Tools->liveU(); }  // Добавить 500 мB
-        if(Keyboard->getKey(MKeyboard::DN_LONG_CLICK)) { Tools->decVoltagePow( 0.5f, false ); Tools->liveU(); }  // Убавить  500 мB
+        if(Keyboard->getKey(MKeyboard::UP_AUTO_CLICK)) { Tools->incVoltagePow( 0.1f, false ); Tools->liveU(); }  // Добавить по 100 мB
+        if(Keyboard->getKey(MKeyboard::DN_AUTO_CLICK)) { Tools->decVoltagePow( 0.1f, false ); Tools->liveU(); }  // Убавить по 100 мB
 
         if(Keyboard->getKey(MKeyboard::B_CLICK))
         { 
@@ -215,6 +215,43 @@ namespace DcSupplyFsm
         }   
 
         if(Keyboard->getKey(MKeyboard::C_CLICK)) { return new MExit(Tools); } 
+
+        // switch ( Keyboard->getKey() )
+        // {
+        //     case MKeyboard::C_CLICK :
+        //         return new MExit(Tools);
+
+        //     case MKeyboard::B_CLICK :
+        //         Tools->saveFloat( "s-power", "voltMax", Tools->getVoltageMax() );
+        //         break;
+
+        //     case MKeyboard::UP_CLICK :
+        //         Tools->incVoltageMax( 0.1f, false );
+        //         Oled->showLine3MaxU( Tools->getVoltageMax() );
+        //         Tools->liveU();
+        //         return new MExecution(Tools);
+
+        //     case MKeyboard::DN_CLICK:
+        //         Tools->decVoltageMax( 0.1f, false );
+        //         Tools->liveU();   
+        //         Oled->showLine3MaxU( Tools->getVoltageMax() );
+        //         return new MExecution(Tools);
+
+        //     case MKeyboard::UP_AUTO_CLICK:
+        //         Tools->incVoltageMax( 0.1f, false );
+        //         Tools->liveU();   
+        //         Oled->showLine3MaxU( Tools->getVoltageMax() );
+        //         return new MExecution(Tools);
+
+        //     case MKeyboard::DN_AUTO_CLICK:
+        //         Tools->decVoltageMax( 0.1f, false );
+        //         Tools->liveU();   
+        //         Oled->showLine3MaxU( Tools->getVoltageMax() );
+        //         return new MExecution(Tools);
+        //     default:;
+        // }
+        // Oled->showLine3RealCurrent();
+
 
         Tools->runPidVoltage();
 

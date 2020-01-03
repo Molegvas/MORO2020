@@ -103,19 +103,49 @@ namespace RecoveryFsm
 
     MState * MSetCurrentMax::fsm()
     {
-        if(Keyboard->getKey(MKeyboard::UP_CLICK)) { Tools->incCurrentMax( 0.1f, false ); return this; }     // Добавить 100 мА
-        if(Keyboard->getKey(MKeyboard::DN_CLICK)) { Tools->decCurrentMax( 0.1f, false ); return this; } 
+        // if(Keyboard->getKey(MKeyboard::UP_CLICK)) { Tools->incCurrentMax( 0.1f, false ); return this; }     // Добавить 100 мА
+        // if(Keyboard->getKey(MKeyboard::DN_CLICK)) { Tools->decCurrentMax( 0.1f, false ); return this; } 
 
-        if(Keyboard->getKey(MKeyboard::B_CLICK))      // Завершить коррекцию максимального тока заряда
+        // if(Keyboard->getKey(MKeyboard::B_CLICK))      // Завершить коррекцию максимального тока заряда
+        // {
+        //     Tools->writeNvsFloat( "recovery", "currMax", Tools->getCurrentMax() );
+        //     Tools->activateSetVoltMax( true );
+        //     return new MSetvoltageMax(Tools);
+        // }
+
+        switch ( Keyboard->getKey() )
         {
-            Tools->writeNvsFloat( "recovery", "currMax", Tools->getCurrentMax() );
-            Tools->activateSetVoltMax( true );
-            return new MSetvoltageMax(Tools);
+            // case MKeyboard::C_LONG_CLICK :                  // Отказ от продолжения ввода параметров - стоп
+            //     return new MStop(Tools);
+            // case MKeyboard::C_CLICK :                       // Отказ от дальнейшего ввода параметров - исполнение
+            //     return new MPostpone(Tools);
+            case MKeyboard::B_CLICK :                       // Сохранить и перейти к следующему параметру
+                Tools->saveFloat( "recovery", "currMax", Tools->getCurrentMax() );
+    Tools->activateSetVoltMax( true );                  // старый вариант!
+                return new MSetVoltageMax(Tools);
+
+            case MKeyboard::UP_CLICK :
+                Tools->incCurrentMax( 0.1f, false );        // По кольцу? - Нет
+                break;
+            case MKeyboard::DN_CLICK:
+                Tools->decCurrentMax( 0.1f, false );
+                break;
+            case MKeyboard::UP_AUTO_CLICK:
+                Tools->incCurrentMax( 0.1f, false );
+                break;
+            case MKeyboard::DN_AUTO_CLICK:
+                Tools->decCurrentMax( 0.1f, false );
+                break;
+            default:;
         }
+        #ifdef OLED_1_3
+            Oled->showLine3MaxI( Tools->getCurrentMax() );
+        #endif
+
         return this;
     };
 
-    MState * MSetvoltageMax::fsm()
+    MState * MSetVoltageMax::fsm()
     {
         if(Keyboard->getKey(MKeyboard::UP_CLICK)) { Tools->incVoltageMax( 0.1f, false ); return this; }
         if(Keyboard->getKey(MKeyboard::DN_CLICK)) { Tools->decVoltageMax( 0.1f, false ); return this; } 

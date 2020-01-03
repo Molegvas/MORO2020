@@ -539,12 +539,12 @@ void MTools::decCapacity( float delta, bool way )
 void MTools::incCurrentMax( float delta, bool way )
 {
     currentMax = incfValue( currentMax, curr_max_l, curr_max_h, delta, way );
-    Oled->showLine3MaxI( currentMax );
+//    Oled->showLine3MaxI( currentMax );
 }
 void MTools::decCurrentMax( float delta, bool way )
 {
     currentMax = decfValue( currentMax, curr_max_l, curr_max_h, delta, way );
-    Oled->showLine3MaxI( currentMax );
+//    Oled->showLine3MaxI( currentMax );
 }
 
 void MTools::incCurrentMin( float delta, bool way )

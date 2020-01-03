@@ -103,19 +103,48 @@ namespace ExChargerFsm
     // Выбор максимального тока импульсного заряда
     MState * MSetCurrentMax::fsm()
     {
-        // Выход без сохранения корректируемого параметра
-        if( Keyboard->getKey(MKeyboard::C_LONG_CLICK)) { Tools->shutdownCharge(); return new MStop(Tools); }
+        // // Выход без сохранения корректируемого параметра
+        // if( Keyboard->getKey(MKeyboard::C_LONG_CLICK)) { Tools->shutdownCharge(); return new MStop(Tools); }
 
-        if( Keyboard->getKey(MKeyboard::UP_CLICK))      { Tools->incCurrentMax( 0.1f, false ); return this; }     // Добавить 100 мА
-        if( Keyboard->getKey(MKeyboard::DN_CLICK))      { Tools->decCurrentMax( 0.1f, false ); return this; }
-        if( Keyboard->getKey(MKeyboard::UP_LONG_CLICK)) { Tools->incCurrentMax( 0.5f, false ); return this; }     // Добавить 500 мА
-        if( Keyboard->getKey(MKeyboard::DN_LONG_CLICK)) { Tools->decCurrentMax( 0.5f, false ); return this; }
+        // if( Keyboard->getKey(MKeyboard::UP_CLICK))      { Tools->incCurrentMax( 0.1f, false ); return this; }     // Добавить 100 мА
+        // if( Keyboard->getKey(MKeyboard::DN_CLICK))      { Tools->decCurrentMax( 0.1f, false ); return this; }
+        // if( Keyboard->getKey(MKeyboard::UP_LONG_CLICK)) { Tools->incCurrentMax( 0.5f, false ); return this; }     // Добавить 500 мА
+        // if( Keyboard->getKey(MKeyboard::DN_LONG_CLICK)) { Tools->decCurrentMax( 0.5f, false ); return this; }
 
-        if( Keyboard->getKey(MKeyboard::B_CLICK))
+        // if( Keyboard->getKey(MKeyboard::B_CLICK))
+        // {
+        //     Tools->writeNvsFloat( "e-charge", "currMax", Tools->getCurrentMax() );
+        //     return new MSetVoltageMax(Tools);
+        // }
+
+        switch ( Keyboard->getKey() )
         {
-            Tools->writeNvsFloat( "e-charge", "currMax", Tools->getCurrentMax() );
-            return new MSetVoltageMax(Tools);
+            case MKeyboard::C_LONG_CLICK :                  // Отказ от продолжения ввода параметров - стоп
+                return new MStop(Tools);
+            case MKeyboard::C_CLICK :                       // Отказ от дальнейшего ввода параметров - исполнение
+                return new MPostpone(Tools);
+            case MKeyboard::B_CLICK :                       // Сохранить и перейти к следующему параметру
+                Tools->saveFloat( "e-charge", "currMax", Tools->getCurrentMax() ); 
+                return new MSetVoltageMax(Tools);
+
+            case MKeyboard::UP_CLICK :
+                Tools->incCurrentMax( 0.1f, false );        // По кольцу? - Нет
+                break;
+            case MKeyboard::DN_CLICK:
+                Tools->decCurrentMax( 0.1f, false );
+                break;
+            case MKeyboard::UP_AUTO_CLICK:
+                Tools->incCurrentMax( 0.1f, false );
+                break;
+            case MKeyboard::DN_AUTO_CLICK:
+                Tools->decCurrentMax( 0.1f, false );
+                break;
+            default:;
         }
+        #ifdef OLED_1_3
+            Oled->showLine3MaxI( Tools->getCurrentMax() );
+        #endif
+    
         return this;
     };
 

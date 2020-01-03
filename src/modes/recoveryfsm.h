@@ -33,10 +33,10 @@ namespace RecoveryFsm
             virtual MState * fsm() override;
     };
     
-    class MSetvoltageMax : public MState
+    class MSetVoltageMax : public MState
     {
         public:   
-            MSetvoltageMax(MTools * Tools) : MState(Tools) {}     
+            MSetVoltageMax(MTools * Tools) : MState(Tools) {}     
             virtual MState * fsm() override;
     };
     

@@ -46,20 +46,6 @@ namespace CcCvFsm
     }
     MState * MStart::fsm()
     {
-        // if( Keyboard->getKey(MKeyboard::C_CLICK)) 
-        // {
-        //     // Старт без уточнения параметров (здесь – для батарей типа AGM), 
-        //     // максимальный ток и напряжение окончания - паспортные, исходя из параметров АКБ 
-        //     // Выбор АКБ производится в "Настройках".
-        //     Tools->setVoltageMax( Tools->getVoltageNom() * 1.234f );                // Например, voltageMax = 14.8;
-        //     Tools->setCurrentMax( Tools->getCapacity() * 0.20f );
-        //     Tools->setVoltageMin( Tools->getVoltageNom() * 0.89f );
-        //     Tools->setCurrentMin( Tools->getCapacity() * 0.05f );
-        //     return new MPostpone(Tools);
-        // }
-
-        // if( Keyboard->getKey(MKeyboard::P_CLICK)) { return new MSetFactory(Tools); }      // Выбрано уточнение настроек заряда.
-
         switch ( Keyboard->getKey() )    //Здесь так можно
         {
             case MKeyboard::C_CLICK :
@@ -100,20 +86,6 @@ namespace CcCvFsm
     }
     MState * MSetFactory::fsm()
     {
-        // if ( Keyboard->getKey(MKeyboard::C_CLICK)) { return new MSetCurrentMax(Tools); }  // Отказ в восстановлении заводских параметров.
-
-        // // Восстановление заводских параметров режима заряда.
-        // if( Keyboard->getKey(MKeyboard::B_CLICK))
-        // {
-        //     Tools->clearAllKeys("cccv");                                            // Очистка в энергонезависимой памяти.
-
-        //     // Восстановление параметров заряда (после очистки – дефолтными значениями).
-        //     Tools->setVoltageMax( Tools->readNvsFloat("cccv", "voltMax", 14.5f) );
-        //     Tools->setVoltageMin( Tools->readNvsFloat("cccv", "voltMin", 13.2f) );
-        //     Tools->setCurrentMax( Tools->readNvsFloat("cccv", "currMax",  5.0f) );
-        //     Tools->setCurrentMin( Tools->readNvsFloat("cccv", "currMin",  0.5f) );
-        //     return new MSetCurrentMax(Tools);
-        // }
         switch ( Keyboard->getKey() )
         {
             case MKeyboard::C_CLICK :
@@ -145,26 +117,9 @@ namespace CcCvFsm
     }
     MState * MSetCurrentMax::fsm()
     {
-        /*
-        // Выход и старт без сохранения корректируемого параметра.
-        if( Keyboard->getKey(MKeyboard::C_LONG_CLICK)) { return new MStop(Tools); }    
-        if( Keyboard->getKey(MKeyboard::C_CLICK)) { return new MPostpone(Tools); }
-        // Сохранение параметра в энергонезависимой памяти и переход к следующему параметру.
-        if( Keyboard->getKey(MKeyboard::B_CLICK))
-        { 
-            Tools->saveFloat( "cccv", "currMax", Tools->getCurrentMax() ); 
-            return new MSetVoltageMax(Tools); 
-        }
-        // Коррекция параметра.
-        if( Keyboard->getKey(MKeyboard::UP_CLICK))      { Tools->incCurrentMax( 0.1f, false ); return this; } // Up/Dn по 100 мА
-        if( Keyboard->getKey(MKeyboard::DN_CLICK))      { Tools->decCurrentMax( 0.1f, false ); return this; } 
-        if( Keyboard->getKey(MKeyboard::UP_LONG_CLICK)) { Tools->incCurrentMax( 0.5f, false ); return this; } // Up/Dn по 500 мА
-        if( Keyboard->getKey(MKeyboard::DN_LONG_CLICK)) { Tools->decCurrentMax( 0.5f, false ); return this; } 
-        */
-
         switch ( Keyboard->getKey() )
         {
-            case MKeyboard::C_LONG_CLICK :                   // Отказ от продолжения ввода параметров - стоп
+            case MKeyboard::C_LONG_CLICK :                  // Отказ от продолжения ввода параметров - стоп
                 return new MStop(Tools);
             case MKeyboard::C_CLICK :                       // Отказ от дальнейшего ввода параметров - исполнение
                 return new MPostpone(Tools);
@@ -191,7 +146,7 @@ namespace CcCvFsm
         #endif
         return this;
     };
-// **************************************************************************************
+
     // Коррекция максимального напряжения.
     MSetVoltageMax::MSetVoltageMax(MTools * Tools) : MState(Tools)
     {
@@ -202,22 +157,33 @@ namespace CcCvFsm
     }
     MState * MSetVoltageMax::fsm()
     {
-        // Выход и старт без сохранения корректируемого параметра.
-        if( Keyboard->getKey(MKeyboard::C_LONG_CLICK)) { return new MStop(Tools); }
-        if( Keyboard->getKey(MKeyboard::C_CLICK)) { return new MPostpone(Tools); }
-
-        // Коррекция параметра.
-        if( Keyboard->getKey(MKeyboard::UP_CLICK))      { Tools->incVoltageMax( 0.1f, false ); return this; }
-        if( Keyboard->getKey(MKeyboard::DN_CLICK))      { Tools->decVoltageMax( 0.1f, false ); return this; }
-        if( Keyboard->getKey(MKeyboard::UP_LONG_CLICK)) { Tools->incVoltageMax( 0.5f, false ); return this; }
-        if( Keyboard->getKey(MKeyboard::DN_LONG_CLICK)) { Tools->decVoltageMax( 0.5f, false ); return this; }
-
-        // Сохранение параметра в энергонезависимой памяти и переход к следующему параметру.
-        if( Keyboard->getKey(MKeyboard::B_CLICK))
+        switch ( Keyboard->getKey() )
         {
-            Tools->saveFloat( "cccv", "voltMax", Tools->getVoltageMax() ); 
-            return new MSetCurrentMin(Tools); 
+            case MKeyboard::C_LONG_CLICK :                  // Отказ от продолжения ввода параметров - стоп
+                return new MStop(Tools);
+            case MKeyboard::C_CLICK :                       // Отказ от дальнейшего ввода параметров - исполнение
+                return new MPostpone(Tools);
+            case MKeyboard::B_CLICK :                       // Сохранить и перейти к следующему параметру
+                Tools->saveFloat( "cccv", "voltMax", Tools->getVoltageMax() ); 
+                return new MSetCurrentMin(Tools);
+
+            case MKeyboard::UP_CLICK :
+                Tools->incVoltageMax( 0.1f, false );        // По кольцу? - Нет
+                break;
+            case MKeyboard::DN_CLICK:
+                Tools->decVoltageMax( 0.1f, false );
+                break;
+            case MKeyboard::UP_AUTO_CLICK:
+                Tools->incVoltageMax( 0.1f, false );
+                break;
+            case MKeyboard::DN_AUTO_CLICK:
+                Tools->decVoltageMax( 0.1f, false );
+                break;
+            default:;
         }
+        #ifdef OLED_1_3
+            Oled->showLine3MaxU( Tools->getVoltageMax() );
+        #endif
 
         return this;
     };
@@ -232,22 +198,33 @@ namespace CcCvFsm
     }   
     MState * MSetCurrentMin::fsm()
     {
-        // Выход и старт без сохранения корректируемого параметра.
-        if( Keyboard->getKey(MKeyboard::C_LONG_CLICK)) { return new MStop(Tools); }    
-        if( Keyboard->getKey(MKeyboard::C_CLICK))      { return new MPostpone(Tools);} 
+        switch ( Keyboard->getKey() )
+        {
+            case MKeyboard::C_LONG_CLICK :                  // Отказ от продолжения ввода параметров - стоп
+                return new MStop(Tools);
+            case MKeyboard::C_CLICK :                       // Отказ от дальнейшего ввода параметров - исполнение
+                return new MPostpone(Tools);
+            case MKeyboard::B_CLICK :                       // Сохранить и перейти к следующему параметру
+                Tools->saveFloat( "cccv", "currMin", Tools->getCurrentMin() ); 
+                return new MSetVoltageMin(Tools);
 
-        // Коррекция параметра.
-        if( Keyboard->getKey(MKeyboard::UP_CLICK))      { Tools->incCurrentMin( 0.1f, false ); return this; } // Up/Dn по 100 мА
-        if( Keyboard->getKey(MKeyboard::DN_CLICK))      { Tools->decCurrentMin( 0.1f, false ); return this; } 
-        if( Keyboard->getKey(MKeyboard::UP_LONG_CLICK)) { Tools->incCurrentMin( 0.5f, false ); return this; } // Up/Dn по 500 мА
-        if( Keyboard->getKey(MKeyboard::DN_LONG_CLICK)) { Tools->decCurrentMin( 0.5f, false ); return this; } 
-
-        // Сохранение параметра в энергонезависимой памяти и переход к следующему параметру.
-        if( Keyboard->getKey(MKeyboard::B_CLICK))
-        { 
-            Tools->saveFloat( "cccv", "currMin", Tools->getCurrentMin() ); 
-            return new MSetVoltageMin(Tools); 
+            case MKeyboard::UP_CLICK :
+                Tools->incCurrentMin( 0.1f, false );        // По кольцу? - Нет
+                break;
+            case MKeyboard::DN_CLICK:
+                Tools->decCurrentMin( 0.1f, false );
+                break;
+            case MKeyboard::UP_AUTO_CLICK:
+                Tools->incCurrentMin( 0.1f, false );
+                break;
+            case MKeyboard::DN_AUTO_CLICK:
+                Tools->decCurrentMin( 0.1f, false );
+                break;
+            default:;
         }
+        #ifdef OLED_1_3
+            Oled->showLine3MaxI( Tools->getCurrentMin() );
+        #endif
 
         return this;
     };
@@ -262,25 +239,37 @@ namespace CcCvFsm
     }   
     MState * MSetVoltageMin::fsm()
     {
-        // Выход и старт без сохранения корректируемого параметра.
-        if( Keyboard->getKey(MKeyboard::C_LONG_CLICK)) { return new MStop(Tools); }
-        if( Keyboard->getKey(MKeyboard::C_CLICK))      { return new MPostpone(Tools); }
-
-        // Коррекция параметра
-        if( Keyboard->getKey(MKeyboard::UP_CLICK))      { Tools->incVoltageMin( 0.1f, false ); return this; }
-        if( Keyboard->getKey(MKeyboard::DN_CLICK))      { Tools->decVoltageMin( 0.1f, false ); return this; }
-        if( Keyboard->getKey(MKeyboard::UP_LONG_CLICK)) { Tools->incVoltageMin( 0.5f, false ); return this; }
-        if( Keyboard->getKey(MKeyboard::DN_LONG_CLICK)) { Tools->decVoltageMin( 0.5f, false ); return this; }
-
-        // Сохранение параметра в энергонезависимой памяти. Это последний параметр, старт автоматически.
-        if( Keyboard->getKey(MKeyboard::B_CLICK))
+        switch ( Keyboard->getKey() )
         {
-            Tools->saveFloat( "cccv", "voltMin", Tools->getVoltageMin() ); 
-            return new MPostpone(Tools); 
+            case MKeyboard::C_LONG_CLICK :                  // Отказ от продолжения ввода параметров - стоп
+                return new MStop(Tools);
+            case MKeyboard::C_CLICK :                       // Отказ от дальнейшего ввода параметров - исполнение
+                return new MPostpone(Tools);
+            case MKeyboard::B_CLICK :                       // Сохранить и перейти к следующему параметру
+                Tools->saveFloat( "cccv", "voltMin", Tools->getVoltageMin() ); 
+                return new MPostpone(Tools);
+
+            case MKeyboard::UP_CLICK :
+                Tools->incVoltageMin( 0.1f, false );        // По кольцу? - Нет
+                break;
+            case MKeyboard::DN_CLICK:
+                Tools->decVoltageMin( 0.1f, false );
+                break;
+            case MKeyboard::UP_AUTO_CLICK:
+                Tools->incVoltageMin( 0.1f, false );
+                break;
+            case MKeyboard::DN_AUTO_CLICK:
+                Tools->decVoltageMin( 0.1f, false );
+                break;
+            default:;
         }
+        #ifdef OLED_1_3
+            Oled->showLine3MaxU( Tools->getVoltageMin() );
+        #endif
 
         return this;
     };
+// **************************************************************************************
 
     // Задержка включения (отложенный старт), светидиод белый, мигает.
     MPostpone::MPostpone(MTools * Tools) : MState(Tools)
@@ -298,13 +287,25 @@ namespace CcCvFsm
     }     
     MState * MPostpone::fsm()
     {
-        // Возможно досрочное прекращение заряда или
-        if (Keyboard->getKey(MKeyboard::C_LONG_CLICK)) { return new MStop(Tools); }    
+        // // Возможно досрочное прекращение заряда или
+        // if (Keyboard->getKey(MKeyboard::C_LONG_CLICK)) { return new MStop(Tools); }    
 
-        // ... старт по времени или оператором
-        if( Tools->postponeCalculation() || Keyboard->getKey(MKeyboard::C_CLICK ) ) { return new MUpCurrent(Tools); }
+        // // ... старт по времени или оператором
+        // if( Tools->postponeCalculation() || Keyboard->getKey(MKeyboard::C_CLICK ) ) { return new MUpCurrent(Tools); }
 
-        Board->blinkWhite();           // Мигать белым – время пошло.
+        if( Tools->postponeCalculation() ) return new MUpCurrent(Tools);    // Старт по времени
+
+        switch ( Keyboard->getKey() )
+        {
+            case MKeyboard::C_LONG_CLICK :        // Досрочное прекращение заряда оператором
+                return new MStop(Tools);
+            case MKeyboard::C_CLICK :
+                return new MStop(Tools);
+            default:;
+        }
+        #ifndef OLED_1_3
+            Board->blinkWhite();           // Мигать белым – время пошло.
+        #endif
         return this;
     };
 
@@ -321,9 +322,8 @@ namespace CcCvFsm
         // Включение преобразователя и коммутатора (уточнить порядок?)
         Board->setDischargeAmp( 0.0f );
         Board->setCurrentAmp( 0.0f );               // Ток в начале будет ограничен
-        Board->powOn();     Board->swOn();          // Включение преобразователя и коммутатора. 
+        Board->powOn();     Board->swOn();          // Включение преобразователя и коммутатора.
         Board->ledsOff();   Board->ledGOn();        // Зеленый светодиод - процесс заряда запущен
-
         // Индикация построчно (4-я строка - верхняя)
         Oled->showLine4RealVoltage();
         Oled->showLine3RealCurrent();

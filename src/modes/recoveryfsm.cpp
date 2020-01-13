@@ -26,7 +26,9 @@ namespace RecoveryFsm
         #ifdef DEBUG_CHARGE
             Serial.println("Recovery: Invitation");
         #endif
-        Board->ledsOn();
+        #ifdef V22
+            Board->ledsOn();
+        #endif
         // При выборе режима основные параметры восстанавливаются такими, какими они были в крайнем
         // сеансе работы в режиме заряда АКБ из энергонезависимой памяти (qulon, recovery namespaces).
         // В случае первого запуска с чистой памятью - значения дефолтные.

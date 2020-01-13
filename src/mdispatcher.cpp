@@ -37,9 +37,9 @@ MDispatcher::MDispatcher(MTools * tools) :
 {
     mode = Tools->readNvsInt  ("qulon", "mode", 0);                 // Индекс массива
     showMode( mode );
-
-    Board->ledsOff();                                               // при выборе режима
-
+    #ifdef V22
+      Board->ledsOff();                                               // при выборе режима
+    #endif
     Tools->powInd = Tools->readNvsInt  ("qulon", "powInd", 3);      // 3 - дефолтный индекс массива
 
     Tools->akbInd     = Tools->readNvsInt  ("qulon", "akbInd", 3);                  // Индекс массива с набором батарей

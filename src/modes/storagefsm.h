@@ -25,7 +25,9 @@ namespace StorageFsm
             Oled->showLine1Time(0);                         // уточнить
             //Oled->showLine1Ah(0.0);                         // уточнить
             Oled->showLine1Celsius( Board->Overseer->getCelsius() );
-            Board->ledsOn();                                // Светодиод светится белым до старта заряда - режим выбран
+            #ifdef V22
+                Board->ledsOn();                                // Светодиод светится белым до старта заряда - режим выбран
+            #endif
         }
         virtual MState * fsm() override;
     };
@@ -65,8 +67,9 @@ namespace StorageFsm
             Board->setCurrentAmp( 0.0f );
             Board->setDischargeAmp( Tools->getCurrentDis() );  // 
             Board->powOn();   Board->swOn();                    // Включение преобразователя и коммутатора. 
-            Board->ledsGreen();                  // Зеленый светодиод - процесс разряда запущен
-
+            #ifdef V22
+                Board->ledsGreen();                  // Зеленый светодиод - процесс разряда запущен
+            #endif
             // Задание отображения на экране дисплея построчно (4-я строка - верхняя)
             Oled->showLine4RealVoltage();
             Oled->showLine3RealCurrent();

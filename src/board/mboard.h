@@ -27,22 +27,22 @@ class MBoard
     MBoard(MOled * oled);
 
     void initPorts();
+    #ifdef V22
+      void ledROn();	  // Turn the RED LED on
+      void ledROff();	  // Turn the RED LED off
 
-    void ledROn();	  // Turn the RED LED on
-    void ledROff();	  // Turn the RED LED off
+      void ledGOn();    // Turn the GREEN LED on
+      void ledGOff();	  // Turn the GREEN LED off
 
-    void ledGOn();    // Turn the GREEN LED on
-    void ledGOff();	  // Turn the GREEN LED off
+      void ledBOn();	  // Turn the BLUE LED on
+      void ledBOff();	  // Turn the BLUE LED off
 
-    void ledBOn();	  // Turn the BLUE LED on
-    void ledBOff();	  // Turn the BLUE LED off
-
-    void ledsOn();	
-    void ledsOff();
-    void ledsRed();
-    void ledsGreen();
-    void ledsYellow();	
-
+      void ledsOn();	
+      void ledsOff();
+      void ledsRed();
+      void ledsGreen();
+      void ledsYellow();	
+    #endif
     //void buzzerOn();
     //void buzzerOff();
 
@@ -55,13 +55,13 @@ class MBoard
     bool getNeg();
     bool getFastOff();
     bool getPowGood();
-
-    void blinkWhite();
-    void blinkRed();
-    void blinkGreen();
-    void blinkBlue();
-    void blinkYellow();
-
+    #ifdef V22
+      void blinkWhite();
+      void blinkRed();
+      void blinkGreen();
+      void blinkBlue();
+      void blinkYellow();
+    #endif
 //=================201904==================
 
     //void initAdcV11db();

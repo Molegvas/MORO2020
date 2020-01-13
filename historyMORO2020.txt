@@ -87,3 +87,7 @@ void Adafruit_ST77xx::setAddrWindow(uint16_t x, uint16_t y, uint16_t w,
 07:27 27.12.2019
 Новый проект под GitHub
 Открыт в E:\GitHub\MORO2020
+
+20:28 12.01.2020
+Корректировка про V43
+Отключение RGB светодиода     - 

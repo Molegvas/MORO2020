@@ -19,8 +19,14 @@ MOled::MOled()
     // The complete list is available here: https://github.com/olikraus/u8g2/wiki/u8g2setupcpp
 #ifdef V22
     U8g2 = new U8G2_SSD1309_128X64_NONAME2_F_4W_SW_SPI( U8G2_R2, MPins::scl_pin, MPins::sda_pin, MPins::cs_pin, MPins::dc_pin, MPins::res_pin );  // OK
-#else
-    U8g2 = new U8G2_SSD1309_128X64_NONAME2_F_4W_SW_SPI( U8G2_R2, /* scl_pin*/ 14, /* dc_pin*/ 13, /* cs_pin*/ 04, /* dc_pin*/ 12, /* reset=*/ 15);  // OK
+#endif
+
+#ifdef V43
+    U8g2 = new U8G2_SSD1309_128X64_NONAME2_F_4W_SW_SPI( U8G2_R2, MPins::scl_pin,
+                                                                 MPins::sda_pin,
+                                                                 MPins::cs_pin,
+                                                                 MPins::dc_pin,
+                                                                 MPins::res_pin);  // 
 #endif
 
     resetLCD();

@@ -276,7 +276,9 @@ void MTools::activateExit(const char * s)
     Oled->showLine2Text( s ); 
     
     Oled->showLine1Heap(ESP.getFreeHeap());
-    Board->ledsOff();      
+    #ifdef V22
+        Board->ledsOff(); 
+    #endif     
 }
 
 
@@ -366,7 +368,9 @@ void  MTools::initPulse( float range ) {
     Serial.print("-----#+ range ");   Serial.println( range );
 
         Board->swOn();                                          // Включение коммутатора. 
-        Board->ledsGreen();                                     // Зеленый светодиод - импульс
+        #ifdef V22
+            Board->ledsGreen();                                     // Зеленый светодиод - импульс
+        #endif
         cycle = cycles = (int)( durationOn * 10.0f );           // Всего циклов в импульсе заряда
 
         initCurrentAvr();
@@ -379,8 +383,9 @@ void  MTools::initPulse( float range ) {
         Board->setDischargeAmp( -range );                  //( 0.0f - range );
     Serial.println("-----#- Discharge");
         Board->swOn();                                          // Включение коммутатора. 
-        Board->ledsYellow();                                    // Желтый светодиод - разряд
-
+        #ifdef V22
+            Board->ledsYellow();                                    // Желтый светодиод - разряд
+        #endif
         cycle = cycles = (int)( durationOff * 10.0f );         // Всего циклов в паузе разряда
     //    count = 0;      // Может пригодиться 
     }   
@@ -393,7 +398,9 @@ void MTools::initPause() {
         Board->setVoltageVolt( 0.0f );
         Board->setDischargeAmp( 0.0f );
 Serial.println("-----#- Pause");
-        Board->ledsYellow();                                    // Желтый светодиод - пауза
+        #ifdef V22
+            Board->ledsYellow();                                    // Желтый светодиод - пауза
+        #endif
         cycle = cycles = (int)( durationOff * 10.0f );          // Всего циклов в паузе
 }
 
@@ -809,8 +816,10 @@ void MTools::activatePowerPh1( float volt, float amp )
     Board->powOn();
     Board->swOn();
 
-    // Зеленый светодиод - процесс заряда запущен
-    Board->ledsOff(); Board->ledGOn();
+    #ifdef V22
+        // Зеленый светодиод - процесс заряда запущен
+        Board->ledsOff(); Board->ledGOn();
+    #endif
 
     // Задание отображения на экране дисплея построчно (4-я строка - верхняя)
     Oled->showLine4RealVoltage();
@@ -856,7 +865,9 @@ void MTools::activateChargeStart()
     Oled->showLine2Text(" P-корр.С-старт ");        // Активны две кнопки: P-сменить настройки, и C-старт
     Oled->showLine1Time(0);                         // уточнить
     Oled->showLine1Ah(0.0);                         // уточнить
-    Board->ledsOn();                                // Светодиод светится белым до старта заряда - режим выбран
+    #ifdef V22
+        Board->ledsOn();                                // Светодиод светится белым до старта заряда - режим выбран
+    #endif
 }
 
 
@@ -871,9 +882,10 @@ void MTools::powShutdown()
 
     Board->powOff();
     Board->swOff();
-    Board->ledsOff();
-    Board->ledROn();
-
+    #ifdef V22
+        Board->ledsOff();
+        Board->ledROn();
+    #endif
     Oled->showLine2Text(" Время: Отдано: ");
     // Oled->showLine1Time( chargeTimeCounter );
     // Oled->showLine1Ah( ahCharge );
@@ -937,10 +949,10 @@ output = 0.0;
         // Включение преобразователя и коммутатора. 
         Board->powOn();
         Board->swOn();
-
-        // Зеленый светодиод - процесс заряда запущен
-        Board->ledsOff(); Board->ledGOn();
-
+        #ifdef V22
+            // Зеленый светодиод - процесс заряда запущен
+            Board->ledsOff(); Board->ledGOn();
+        #endif
     // Задание отображения на экране дисплея построчно (4-я строка - верхняя)
         Oled->showLine4RealVoltage();
         Oled->showLine3RealCurrent();
@@ -1024,10 +1036,10 @@ void MTools::activatePreliminaryCharge()
     // Включение преобразователя и коммутатора. 
     Board->powOn();
     Board->swOn();
-
-    // Зеленый светодиод - процесс заряда запущен
-    Board->ledsOff(); Board->ledGOn();
-
+    #ifdef V22
+        // Зеленый светодиод - процесс заряда запущен
+        Board->ledsOff(); Board->ledGOn();
+    #endif
     // Задание отображения на экране дисплея построчно (4-я строка - верхняя)
     Oled->showLine4RealVoltage();
     Oled->showLine3RealCurrent();
@@ -1091,10 +1103,10 @@ void MTools::activateImpuls( float volt, float amp, float delta ) //************
 
     // Включение преобразователя и коммутатора. 
  //   Board->swOn();
-
-    // Зеленый светодиод - процесс заряда запущен
-    Board->ledsOff(); Board->ledGOn();
-
+    #ifdef V22
+        // Зеленый светодиод - процесс заряда запущен
+        Board->ledsOff(); Board->ledGOn();
+    #endif
     // Задание отображения на экране дисплея построчно (4-я строка - верхняя)
     Oled->showLine4RealVoltage();
     Oled->showLine3RealCurrent();
@@ -1123,7 +1135,9 @@ void MTools::activateSuspendCharge()   // to suspend the charge
 {
 //    Serial.println("#off#");
     Board->swOff();
-    Board->ledROn();     // Жёлтый светодиод - процесс заряда приостановлен
+    #ifdef V22
+        Board->ledROn();     // Жёлтый светодиод - процесс заряда приостановлен
+    #endif
     cycle = durationOff * 2;
 }
 
@@ -1134,11 +1148,11 @@ void MTools::activateResumeCharge() //to resume the charge
   //   Pid.setIntegral( integral );
   //   output = temp;
     Board->swOn();
-    Board->ledsOff(); Board->ledGOn();    // Зеленый светодиод - процесс заряда запущен
+    #ifdef V22
+        Board->ledsOff(); Board->ledGOn();    // Зеленый светодиод - процесс заряда запущен
+    #endif
     cycle = durationOn * 2;
 }
-
-
 
 // Работа ПИД-регулятора в первой фазе (подъём тока)
 void MTools::runChargePh1()
@@ -1561,9 +1575,9 @@ void MTools::activateChargePh2( float _setPoint )
 //Pid.setGains( 0.065, 0.05, 0.02 );      // Убавить агрессивности
 
     Pid.setIntegral( saveIntegral );
-
-    Board->ledROn();                                // G + R = жёлтый
-
+    #ifdef V22
+        Board->ledROn();                                // G + R = жёлтый
+    #endif
     #ifdef DEBUG_CHARGE
         Serial.println(" Переход в фазу 2 стартовал с параметрами:");
         //Serial.print("  Voltage End, B      = ");  Serial.println(voltageMax, 2);
@@ -1620,7 +1634,9 @@ void MTools::shutdown() {
 
     Board->powOff();
     Board->swOff();
-    Board->ledsOff();
+    #ifdef V22
+        Board->ledsOff();
+    #endif
 }
 
 
@@ -1636,8 +1652,9 @@ void MTools::shutdownCharge()
     // Board->swOff();
     // Board->ledsOff();
     shutdown();
-    Board->ledROn();
-
+    #ifdef V22
+        Board->ledROn();
+    #endif
     Oled->showLine2Text(" Время:  Заряд: ");
 }
 
@@ -1669,9 +1686,10 @@ output = 0.0;
     Board->powOn();
     Board->swOn();
 
-    // Зеленый светодиод - процесс заряда запущен
-    Board->ledsOff(); Board->ledGOn();
-
+    #ifdef V22
+        // Зеленый светодиод - процесс заряда запущен
+        Board->ledsOff(); Board->ledGOn();
+    #endif
     // Задание отображения на экране дисплея построчно (4-я строка - верхняя)
     Oled->showLine4RealVoltage();
     Oled->showLine3RealCurrent();
@@ -1725,11 +1743,12 @@ void MTools::activatePause()
 
     Board->powOff();
     Board->swOn();
-    Board->ledsOff();
-    Board->ledROn();
-    Board->ledGOn();
+    #ifdef V22
+        Board->ledsOff();
+        Board->ledROn();
+        Board->ledGOn();
+    #endif
     Oled->showLine2Text(" Пауза:  Заряд: ");
-
 }
 
 bool MTools::pauseCalculations()
@@ -1738,8 +1757,9 @@ bool MTools::pauseCalculations()
     chargeTimeCounter = timeCounter / 2;
     if( ( chargeTimeCounter ) == 0 ) 
     {
-        Board->ledROff();
-
+        #ifdef V22
+            Board->ledROff();
+        #endif
 
 
     //  numCycles--;
@@ -1756,9 +1776,11 @@ void MTools::activateDischarge()
     Board->setVoltageVolt( 0.0f );   //??
     Board->powOff();    //??
     Board->swOn();
-    Board->ledsOff();
-    Board->ledROn();
-    Board->ledGOn();
+    #ifdef V22
+        Board->ledsOff();
+        Board->ledROn();
+        Board->ledGOn();
+    #endif
     Oled->showLine2Text(" Время: Разряд: ");
 }
 

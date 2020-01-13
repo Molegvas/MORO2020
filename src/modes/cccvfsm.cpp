@@ -35,8 +35,12 @@ namespace CcCvFsm
             Oled->showLine2Text(" P-корр.С-старт ");        // Подсказка: активны две кнопки: P-сменить настройки, и C-старт
             Oled->showLine1Time(0);                         // уточнить
             Oled->showLine1Ah(0.0);                         // уточнить
+        #endif
+
+        #ifdef V22
             Board->ledsOn();                                // Светодиод светится белым до старта заряда - режим выбран
         #endif
+
         #ifdef TFT_1_44
             // no leds
         #endif
@@ -323,7 +327,9 @@ namespace CcCvFsm
         Board->setDischargeAmp( 0.0f );
         Board->setCurrentAmp( 0.0f );               // Ток в начале будет ограничен
         Board->powOn();     Board->swOn();          // Включение преобразователя и коммутатора.
-        Board->ledsOff();   Board->ledGOn();        // Зеленый светодиод - процесс заряда запущен
+        #ifdef V22
+            Board->ledsOff();   Board->ledGOn();        // Зеленый светодиод - процесс заряда запущен
+        #endif
         // Индикация построчно (4-я строка - верхняя)
         Oled->showLine4RealVoltage();
         Oled->showLine3RealCurrent();
@@ -370,7 +376,9 @@ namespace CcCvFsm
         Tools->setSetPoint( Tools->getVoltageMax() );
         // Индикация
         Oled->showLine2Text("  const Vmax... ");
-        Board->ledROn();                // Желтый светодиод (R & G) - процесс поддержания максимального напряжения
+        #ifdef V22
+            Board->ledROn();                // Желтый светодиод (R & G) - процесс поддержания максимального напряжения
+        #endif
     }       
     MState * MKeepVmax::fsm()
     {
@@ -411,8 +419,9 @@ namespace CcCvFsm
 
         // Необходимая коррекция против выброса тока
         if( Board->getCurrent() > Tools->getCurrentMax() ) { Tools->adjustIntegral( -0.250f ); }        // -0.025A
-
-        Board->blinkYellow();           // Желтый светодиод мигает - процесс поддержания минимального напряжения
+        #ifdef V22
+            Board->blinkYellow();           // Желтый светодиод мигает - процесс поддержания минимального напряжения
+        #endif
         Tools->runPid( Board->getVoltage() );           // Регулировка по напряжению
         return this;
     };

@@ -12,8 +12,9 @@ namespace OptionFsm
     {       
       public:
         MStart(MTools * Tools) : MState(Tools) {
-          Board->ledsOn();
-
+          #ifdef V22
+            Board->ledsOn();
+          #endif
         }
         virtual MState * fsm() override;
     };

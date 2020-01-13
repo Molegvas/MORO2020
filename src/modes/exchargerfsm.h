@@ -31,7 +31,9 @@ namespace ExChargerFsm
             Oled->showLine2Text(" P-корр.С-старт ");        // Активны две кнопки: P-сменить настройки, и C-старт
             Oled->showLine1Time( 0 );                         // уточнить
             Oled->showLine1Ah( 0.0f );                         // уточнить
-            Board->ledsOn();                                // Светодиод светится белым до старта заряда - режим выбран
+            #ifdef V22
+                Board->ledsOn();                                // Светодиод светится белым до старта заряда - режим выбран
+            #endif
             }
         virtual MState * fsm() override;
     };
@@ -146,8 +148,9 @@ namespace ExChargerFsm
                 Board->setDischargeAmp( 0.0f );
                 Board->setCurrentAmp( 0.0f );               // Ток в начале будет ограничен
                 Board->powOn();     Board->swOn();          // Включение преобразователя и коммутатора. 
-                Board->ledsOff();   Board->ledGOn();        // Зеленый светодиод - процесс заряда запущен
-
+                #ifdef V22
+                    Board->ledsOff();   Board->ledGOn();        // Зеленый светодиод - процесс заряда запущен
+                #endif
                 // Индикация построчно (4-я строка - верхняя)
                 Oled->showLine4RealVoltage();
                 Oled->showLine3RealCurrent();

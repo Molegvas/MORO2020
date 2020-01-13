@@ -14,20 +14,20 @@ MBoard::MBoard(MOled * oled) : Oled(oled)
     //initCool();
     Overseer = new MOverseer(this);
 }
+#ifdef V22
+  void MBoard::ledROn()	  { digitalWrite(MPins::led_r_pin, LOW); }   // Turn the RED LED on
+  void MBoard::ledROff()	{ digitalWrite(MPins::led_r_pin, HIGH); }  // Turn the RED LED off
+  void MBoard::ledGOn()	  { digitalWrite(MPins::led_g_pin, LOW); }   // Turn the GREEN LED on
+  void MBoard::ledGOff()	{ digitalWrite(MPins::led_g_pin, HIGH); }  // Turn the GREEN LED off
+  void MBoard::ledBOn()	  { digitalWrite(MPins::led_b_pin, LOW); }   // Turn the BLUE LED on
+  void MBoard::ledBOff()	{ digitalWrite(MPins::led_b_pin, HIGH); }  // Turn the BLUE LED off
 
-void MBoard::ledROn()	  { digitalWrite(MPins::led_r_pin, LOW); }   // Turn the RED LED on
-void MBoard::ledROff()	{ digitalWrite(MPins::led_r_pin, HIGH); }  // Turn the RED LED off
-void MBoard::ledGOn()	  { digitalWrite(MPins::led_g_pin, LOW); }   // Turn the GREEN LED on
-void MBoard::ledGOff()	{ digitalWrite(MPins::led_g_pin, HIGH); }  // Turn the GREEN LED off
-void MBoard::ledBOn()	  { digitalWrite(MPins::led_b_pin, LOW); }   // Turn the BLUE LED on
-void MBoard::ledBOff()	{ digitalWrite(MPins::led_b_pin, HIGH); }  // Turn the BLUE LED off
-
-void MBoard::ledsOn()	    { ledROn(); ledGOn(); ledBOn(); }
-void MBoard::ledsOff()	  { ledROff(); ledGOff(); ledBOff(); }
-void MBoard::ledsRed()    { ledROn(); ledGOff(); ledBOff(); }   // Красный светодиод
-void MBoard::ledsGreen()  { ledROff(); ledGOn(); ledBOff(); }   // Зеленый светодиод
-void MBoard::ledsYellow() { ledROn(); ledGOn(); ledBOff(); }    // Желтый светодиод
-
+  void MBoard::ledsOn()	    { ledROn(); ledGOn(); ledBOn(); }
+  void MBoard::ledsOff()	  { ledROff(); ledGOff(); ledBOff(); }
+  void MBoard::ledsRed()    { ledROn(); ledGOff(); ledBOff(); }   // Красный светодиод
+  void MBoard::ledsGreen()  { ledROff(); ledGOn(); ledBOff(); }   // Зеленый светодиод
+  void MBoard::ledsYellow() { ledROn(); ledGOn(); ledBOff(); }    // Желтый светодиод
+#endif
 
 //void MBoard::buzzerOn()   { digitalWrite(buz_pin, HIGH); }
 //void MBoard::buzzerOff()  { digitalWrite(buz_pin, LOW); }
@@ -82,11 +82,13 @@ void MBoard::initPorts() {
   analogSetPinAttenuation( MPins::pinT, ADC_11db);
   analogSetPinAttenuation( MPins::pinK, ADC_11db);
 
-	// Светодиоды
-	pinMode( MPins::led_r_pin, OUTPUT_OPEN_DRAIN );     	// Initialize the LED pins as an outputs
-	pinMode( MPins::led_g_pin, OUTPUT_OPEN_DRAIN );      // ...
-	pinMode( MPins::led_b_pin, OUTPUT_OPEN_DRAIN );      // ...
-	ledsOff();
+  #ifdef V22
+    // Светодиоды
+    pinMode( MPins::led_r_pin, OUTPUT_OPEN_DRAIN );     	// Initialize the LED pins as an outputs
+    pinMode( MPins::led_g_pin, OUTPUT_OPEN_DRAIN );      // ...
+    pinMode( MPins::led_b_pin, OUTPUT_OPEN_DRAIN );      // ...
+    ledsOff();
+  #endif
 
   // Зуммер
   //pinMode( buz_pin, OUTPUT );
@@ -129,19 +131,22 @@ void MBoard::initPorts() {
 	ledcWrite( ch_fan, 0 );
 }
 
-void MBoard::blinkWhite() {
-    if( Oled->blink() ) { ledsOn(); }
-    else                { ledsOff();}
-}
+#ifdef V22
+  void MBoard::blinkWhite() {
+      if( Oled->blink() ) { ledsOn(); }
+      else                { ledsOff();}
+  }
 
-void MBoard::blinkRed() {
-    if( Oled->blink() ) { ledROn(); } 
-    else                { ledsOff();}
-}
+  void MBoard::blinkRed() {
+      if( Oled->blink() ) { ledROn(); } 
+      else                { ledsOff();}
+  }
 
-void MBoard::blinkGreen()   { if(Oled->blink()) ledGOn(); else ledsOff(); }
-void MBoard::blinkBlue()    { if(Oled->blink()) ledBOn(); else ledsOff(); }
-void MBoard::blinkYellow()  { if(Oled->blink()) {ledROn(); ledGOn();} else ledsOff(); }
+  void MBoard::blinkGreen()   { if(Oled->blink()) ledGOn(); else ledsOff(); }
+  void MBoard::blinkBlue()    { if(Oled->blink()) ledBOn(); else ledsOff(); }
+  void MBoard::blinkYellow()  { if(Oled->blink()) {ledROn(); ledGOn();} else ledsOff(); }
+#endif
+
 
 float MBoard::readVoltage( int reading )
 {

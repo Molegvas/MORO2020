@@ -70,7 +70,7 @@ void displayTask( void * parameter ) {
                       Tools->getAhCharge(), 
                       Tools->getAP() );
     //Serial.print("Display: Core "); Serial.print(xPortGetCoreID()); Serial.print(" Time = "); Serial.print(millis() - start); Serial.println(" mS");
-    // Core 1, Time = 93 mS
+    // Core 1, Time = 47...53 mS
     vTaskDelay( 250 / portTICK_PERIOD_MS );
   }
   vTaskDelete( NULL );

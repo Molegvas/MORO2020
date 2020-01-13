@@ -48,8 +48,9 @@ namespace TemplateFsm
         if( Keyboard->getKey(MKeyboard::B_CLICK) ) return new MYellow(Tools);     // Выбран желтый
 
         if( --cnt <= 0 ) return new MStop(Tools);                           // Выход через 10 секунд
-
-        Board->blinkGreen();                                                // Мигать зеленым
+        #ifdef V22
+            Board->blinkGreen();                                                // Мигать зеленым
+        #endif
         return this;                        // Ничего не выбрано, через 100мс проверять снова.
     };
 

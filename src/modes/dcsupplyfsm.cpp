@@ -34,7 +34,9 @@ namespace DcSupplyFsm
         Oled->showLine2Text(" P-корр.С-старт ");        // Активны две кнопки: P-сменить настройки, и C-старт
         Oled->showLine1Time(0);                         // уточнить
         Oled->showLine1Ah(0.0);                         // уточнить
-        Board->ledsOn();                                // Светодиод светится белым до старта - режим выбран
+        #ifdef V22
+            Board->ledsOn();                                // Светодиод светится белым до старта - режим выбран
+        #endif
         #ifdef DEBUG_SUPPLY
             Serial.println("DcSupply: Start");
         #endif
@@ -169,9 +171,10 @@ namespace DcSupplyFsm
         // Задаются начальные напряжение и ток
         Board->setVoltageVolt( Tools->getVoltageMax() );            // Voltage limit
         Board->setCurrentAmp( Tools->getCurrentMax() * 1.05f );     // 
-        Board->powOn();   Board->swOn();                            // Включение преобразователя и коммутатора. 
-        Board->ledsOff(); Board->ledGOn();                          // Зеленый светодиод - процесс заряда запущен
-
+        Board->powOn();   Board->swOn();                            // Включение преобразователя и коммутатора.
+        #ifdef V22
+            Board->ledsOff(); Board->ledGOn();                          // Зеленый светодиод - процесс заряда запущен
+        #endif
         // Задаются отображения на экране дисплея построчно (4-я строка - верхняя)
         Oled->showLine4RealVoltage();
         Oled->showLine3RealCurrent();

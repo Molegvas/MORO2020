@@ -114,8 +114,9 @@ namespace OptionFsm
             Oled->showLine2Text("    Настройки   "); 
             
             Oled->showLine1Heap(ESP.getFreeHeap());
-            Board->ledsOff();      
-
+            #ifdef V22
+                Board->ledsOff();      
+            #endif
             #ifdef DEBUG_OPTIONS
                 //Serial.println("Charger: Exit"); 
                 //Serial.print("\t charge = ");   Serial.println( Tools->getAhCharge() );

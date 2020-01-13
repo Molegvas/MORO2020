@@ -29,7 +29,9 @@ namespace TemplateFsm
                 Oled->showLine2Text(" P-YELL. B-BLUE ");        // Подсказка какие кнопки активны: P и B
                 Oled->showLine1Time( 0 );                       // Зададим отображать время и отданный заряд и не будем
                 Oled->showLine1Ah( 0.0f );                      // трогать на следующих шагах вплоть до выхода из режима.
-                Board->ledsOn();                                // Светодиод светится белым как индикатор входа в режим
+                #ifdef V22
+                    Board->ledsOn();                                // Светодиод светится белым как индикатор входа в режим
+                #endif
             }
         virtual MState * fsm() override;
     };
@@ -38,8 +40,9 @@ namespace TemplateFsm
     {
         public:     
             MYellow(MTools * Tools) : MState(Tools) {
-                Board->ledsOff();    Board->ledROn();   Board->ledGOn();
-
+                #ifdef V22
+                    Board->ledsOff();    Board->ledROn();   Board->ledGOn();
+                #endif
                 // Индикация
                 Oled->showLine3Text("  LED YELLOW ");
                 Oled->showLine2Text(" UP-RED  DN-GRN ");        // Подсказка какие кнопки активны: UP и DN
@@ -51,7 +54,9 @@ namespace TemplateFsm
     {
         public:   
             MRed(MTools * Tools) : MState(Tools) {
-                Board->ledsOff();    Board->ledROn();
+                #ifdef V22
+                    Board->ledsOff();    Board->ledROn();
+                #endif
                 // Индикация
                 Oled->showLine3Text("  LED  RED   ");
                 Oled->showLine2Text(" LONG B-BLUE BL ");        // Подсказка какие кнопки активны: LONG B
@@ -79,7 +84,9 @@ namespace TemplateFsm
     {
         public:   
             MBlue(MTools * Tools) : MState(Tools) {
-            Board->ledsOff();    Board->ledBOn();
+            #ifdef V22
+                Board->ledsOff();    Board->ledBOn();
+            #endif
                 Oled->showLine3Text("  LED  BLUE  ");
                 Oled->showLine2Text("  LONG B-Start  ");        // Подсказка какие кнопки активны: UP и DN
             }     

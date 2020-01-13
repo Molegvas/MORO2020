@@ -25,7 +25,9 @@ namespace ServiceFsm
         #ifdef DEBUG_SERVICE
             Serial.println("Service: Invitation");
         #endif
-        Board->ledsOn();
+        #ifdef V22
+            Board->ledsOn();
+        #endif
         // При выборе режима основные параметры восстанавливаются такими, какими они были в крайнем
         // сеансе работы в режиме сервиса АКБ из энергонезависимой памяти (qulon, service namespaces).
         // В случае первого запуска с чистой памятью - значения дефолтные.

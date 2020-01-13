@@ -35,8 +35,9 @@ namespace PulseGenFsm
           Oled->showLine1Time(0);                         // уточнить
           Oled->showLine1Ah(0.0);                         // уточнить
     Tools->shutdown();
-
-          Board->ledsOn();                                // Светодиод светится белым до старта - режим выбран
+          #ifdef V22
+            Board->ledsOn();                                // Светодиод светится белым до старта - режим выбран
+          #endif
           #ifdef DEBUG_SUPPLY
               Serial.println("exPower: Start");
           #endif
@@ -147,8 +148,9 @@ namespace PulseGenFsm
 
           // Задаются начальные напряжение и ток ( эксперименты не закончены )
           Board->swOn();                                      // Включение коммутатора. 
-          Board->ledsOff(); Board->ledGOn();                  // Зеленый светодиод - импульс
-
+          #ifdef V22
+            Board->ledsOff(); Board->ledGOn();                  // Зеленый светодиод - импульс
+          #endif
           // Задание отображения на экране дисплея построчно (4-я строка - верхняя)
           Oled->showLine2Text(" Импульс...     ");        // " Время:  Заряд: "
 
@@ -170,9 +172,10 @@ namespace PulseGenFsm
     {
       public: 
         MPause(MTools * Tools) : MState(Tools) {
-          Board->swOff();                                                     // Выключение коммутатора. 
-          Board->ledsOff(); Board->ledGOn();  Board->ledROn();                // Желтый светодиод - пауза
-
+          Board->swOff();                                                     // Выключение коммутатора.
+          #ifdef V22
+            Board->ledsOff(); Board->ledGOn();  Board->ledROn();                // Желтый светодиод - пауза
+          #endif
           // Задание отображения на экране дисплея построчно (4-я строка - верхняя)
           Oled->showLine4RealVoltage();
           Oled->showLine3RealCurrent();

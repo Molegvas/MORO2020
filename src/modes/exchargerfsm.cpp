@@ -203,8 +203,9 @@ namespace ExChargerFsm
 
         // ... старт по времени или оператором коротким "С"
         if( Tools->postponeCalculation() || Keyboard->getKey(MKeyboard::C_CLICK ) ) { return new MPreliminaryCharge(Tools); }
-
-        Board->blinkWhite();        // Мигать белым при ожидании
+        #ifdef V22
+            Board->blinkWhite();        // Мигать белым при ожидании
+        #endif
         return this;
     };
 

@@ -121,7 +121,7 @@ void MBoard::initPorts() {
 	ledcSetup( ch_discharge, 20000, 10 );
 	ledcAttachPin( MPins::pwm_dis_pin, ch_discharge );
 
-	ledcSetup( ch_fan, 80000, 10);              // 20000, 10
+	ledcSetup( ch_fan, 20000, 10);              // 20000, 10
 	ledcAttachPin( MPins::pwm_fan_pin, ch_fan );
 
 	// Начальная установка ШИМ каналов в 0.
@@ -176,8 +176,11 @@ void MBoard::calcVoltage( float volt ) {
 void MBoard::calcCurrent( int ivalue ) {
 #ifndef V22    
     current = ( readVoltage( ivalue ) * acs712Multiplier + acs712Offset ) * currentMultiplier + currentOffset;
-#else
+#endif
+#ifdef V43
     current = -( readVoltage( ivalue ) * acs712Multiplier + acs712Offset ) * currentMultiplier + currentOffset;
+//  Serial.println( current );
+
 #endif
 }
 
@@ -197,16 +200,22 @@ void  MBoard::setWiresResistance(float r) { wiresResistance = r; }
 float MBoard::getWiresResistance() { return wiresResistance; }
 
 void MBoard::setVoltageVolt( float volts ) { ledcWrite( ch_voltage, volts  * 52.8f ); }        // Подбором для 14,5В (32S) 20180916
+//void MBoard::setVoltageVolt( float volts ) { ledcWrite( ch_voltage, 514 ); }        // Test V43
+
 void MBoard::setDischargeAmp( float ampers ) { ledcWrite( ch_discharge, ampers * 300.0f ); }   // от 0,3 до 3,4А
 
 // Линейная регрессия       y=58.39108942x+5.36189996                    0.5%
 // Квадратичная регрессия   y=−0.02797536x^2 +58.56353881x+5.21770470    0.4%
-uint16_t MBoard::pwm( float ampers ) { 
+uint16_t MBoard::pwm( float ampers ) 
+{ 
     uint16_t iPvm = (uint16_t)( ampers * ampers * -0.02797536f + 58.56353881f * ampers + 5.21770470f );
+//        uint16_t iPvm = 335 ; //  Test V43
+
     return iPvm; 
 }
 
-void MBoard::setCurrentAmp( float ampers ) { 
+void MBoard::setCurrentAmp( float ampers ) 
+{ 
     ledcWrite( ch_current, pwm( ampers ) ); 
 } 
 

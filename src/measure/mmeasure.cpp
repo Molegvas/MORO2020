@@ -33,13 +33,16 @@ namespace MMeasureStates
 {
     MState * MAdcVI::fsm()
     {
-        if( cntVI == 8 )
+        if( cntVI == 16 )       //8 )
         {
             cntVI = 0;
-            averageI = collectI / 8;
+
+            averageI = collectI / 16;       //8;
+//                    Serial.println( averageI );
+
             Board->calcCurrent( averageI );
             collectI = 0;    
-            averageV = collectV / 8;
+            averageV = collectV / 16;       //8;
             collectV = 0;
 
             // Выбор диапазона
@@ -61,7 +64,7 @@ namespace MMeasureStates
                 // ADC_0db, accounting voltageDivider
                 volt = 0.0019166f * averageV + 0.5868099f;
 
-        //        Serial.println( volt );
+        //     Serial.println( volt );
                 Board->calcVoltage( volt );
                 if( volt >= 6.0f ) {
         //            Board->ledsOff(); Board->ledGOn();

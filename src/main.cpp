@@ -51,6 +51,11 @@ void loop() {}
 void connectTask( void * parameter ) {
   while(true) {
   //unsigned long start = millis();
+
+
+//Measure->run();
+
+
     Connect->run(); 
     vTaskDelay( 10 / portTICK_PERIOD_MS );
   //Serial.print("Autoconnect: Core "); Serial.print(xPortGetCoreID()); Serial.print(" Time = "); Serial.print(millis() - start); Serial.println(" mS");

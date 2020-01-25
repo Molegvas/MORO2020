@@ -37,11 +37,16 @@ namespace MMeasureStates
         {
             cntVI = 0;
 
-            averageI = collectI / 16;       //8;
+            averageI  = collectI  / 16;       //8;
+            averageI3 = collectI3 / 16;       //8;
+    //Serial.print("averageI3= "); Serial.println( averageI3 );
+
 //                    Serial.println( averageI );
 
             Board->calcCurrent( averageI );
-            collectI = 0;    
+            collectI  = 0;
+            Board->calcCurrentI3( averageI3 );
+            collectI3 = 0;
             averageV = collectV / 16;       //8;
             collectV = 0;
 
@@ -75,9 +80,12 @@ namespace MMeasureStates
             return new MAdcT(Tools);
         }
         cntVI++;
-        collectV += Board->getAdcV();
-        collectI += Board->getAdcI();
-    //Serial.print("collectV= "); Serial.println( collectV );
+
+        collectI  += Board->getAdcI();
+        collectI3 += Board->getAdcI3();
+        collectV  += Board->getAdcV();
+
+    //Serial.print("collectI3= "); Serial.println( collectI3 );
         return this;
     };
 

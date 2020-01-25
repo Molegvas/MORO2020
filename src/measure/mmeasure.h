@@ -32,8 +32,10 @@ namespace MMeasureStates
         private:
             int collectV    = 0;
             int collectI    = 0;
+            int collectI3   = 0;
             int averageV    = 0;
             int averageI    = 0;
+            int averageI3   = 0;
             int cntVI       = 0;
             float volt      = 0.0f;
     };

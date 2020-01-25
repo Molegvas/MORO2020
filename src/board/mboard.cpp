@@ -54,13 +54,21 @@ int MBoard::adcV_11dbRead()
     void MBoard::initAdcV0db0()  { adcAttachPin( MPins::pinV );  analogSetPinAttenuation( MPins::pinV, ADC_0db); }
 
     void MBoard::initAdcI11db0() { adcAttachPin( MPins::pinI );  analogSetPinAttenuation( MPins::pinI, ADC_11db); }
+    #ifdef V43
+        void MBoard::initAdcI3_11db0() { adcAttachPin( MPins::pinI3 );  analogSetPinAttenuation( MPins::pinI3, ADC_11db); }
+    #endif
+
     void MBoard::initAdcT11db0() { adcAttachPin( MPins::pinT );  analogSetPinAttenuation( MPins::pinT,  ADC_11db); }
     void MBoard::initAdcK11db0() { adcAttachPin( MPins::pinK );  analogSetPinAttenuation( MPins::pinK,  ADC_11db); }
 
     int MBoard::getAdcV() { return analogRead( MPins::pinV ); }
     int MBoard::getAdcI() { return analogRead( MPins::pinI ); }
+    #ifdef V43
+        int MBoard::getAdcI3() { return analogRead( MPins::pinI3 ); }
+    #endif
     int MBoard::getAdcT() { return analogRead( MPins::pinT ); }
     int MBoard::getAdcK() { return analogRead( MPins::pinK ); }
+
 
 //==========================================
 
@@ -72,6 +80,9 @@ void MBoard::initPorts() {
   // Attach a pin to ADC (also clears any other analoque mode that could be on), returns TRUE/FALSE result
   adcAttachPin( MPins::pinV );
   adcAttachPin( MPins::pinI );
+  #ifdef V43
+      adcAttachPin( MPins::pinI3 );
+  #endif
   adcAttachPin( MPins::pinT );
   adcAttachPin( MPins::pinK );
 
@@ -79,6 +90,9 @@ void MBoard::initPorts() {
   analogSetPinAttenuation( MPins::pinV, ADC_11db);   //ADC_11db);
   rangeV = 0;
   analogSetPinAttenuation( MPins::pinI, ADC_11db);
+  #ifdef V43
+    analogSetPinAttenuation( MPins::pinI3, ADC_11db);
+  #endif
   analogSetPinAttenuation( MPins::pinT, ADC_11db);
   analogSetPinAttenuation( MPins::pinK, ADC_11db);
 
@@ -179,10 +193,20 @@ void MBoard::calcCurrent( int ivalue ) {
 #endif
 #ifdef V43
     current = -( readVoltage( ivalue ) * acs712Multiplier + acs712Offset ) * currentMultiplier + currentOffset;
-//  Serial.println( current );
-
+ //  Serial.println( current );
 #endif
 }
+#ifdef V43
+    void MBoard::calcCurrentI3( int ivalue )    // вход с шунта
+    {
+      // квадратичная аппроксимация  y=−0.0000000993x 2 +0.0055366734x+−0.0541871439 
+      // current3 = readVoltage( ivalue ) * readVoltage( ivalue ) * -0.0000000993 + readVoltage( ivalue ) * 0.0055366734 - 0.0541871439;
+    //Serial.print("s_shunta= "); Serial.println( ivalue );
+
+        current3 = ivalue;  // TEST (без вычисления)
+        //Serial.println( current3 );
+    }
+#endif
 
 void MBoard::setVoltage(float _voltage) { voltage = _voltage; }
 void MBoard::setCurrent(float _current) { current = _current; }

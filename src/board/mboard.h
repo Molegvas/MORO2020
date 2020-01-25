@@ -73,11 +73,17 @@ class MBoard
     void initAdcV0db0();
 
     void initAdcI11db0();
+    #ifdef V43
+        void initAdcI3_11db0();
+    #endif
     void initAdcT11db0();
     void initAdcK11db0();
 
     int getAdcV();
     int getAdcI();
+    #ifdef V43
+        int getAdcI3();
+    #endif
     int getAdcT();
     int getAdcK();
 
@@ -109,7 +115,9 @@ class MBoard
 
     void calcVoltage( float volt );
     void calcCurrent( int ivalue );
-
+    #ifdef V43
+        void calcCurrentI3( int ivalue );
+    #endif
 //    void runCool();
 
     void setCurrentAmp( float ampers );
@@ -130,6 +138,9 @@ class MBoard
   private:
     float voltage         =  0.0f;    // Напряжение на клеммах аккумулятора, В ( с поправкой на падение напряжения на проводах)
     float current         =  0.0f;    // Текущий измеренный ток, А
+    #ifdef V43
+      float current3      =  0.0f;    // Текущий измеренный шунтом ток, А
+    #endif
     float wiresResistance =  0.14f;   // The resistance of the wires (KofPad) 0,14 Ом - провода длинные, ок 3м, при токе ок 1,2А, подбором
     float offsetU         =  1.10f;   // Подбор
     float offsetI         = -0.08f;

@@ -1,5 +1,25 @@
 .LOG
 
+Важно!
+В отличие от CP2101/CP2102, микросхемы CP2104 поставляются с уже прописанным уникальным
+серийным номером. Таким образом, вышеописанная проблема решена автоматически.
+Однако, есть ситуация, когда наличие уникального серийного номера усложняет жизнь пользователю.
+Например, требуетя протестировать партию изделий, в которых используется микросхема CP2104. При
+подключении к компьютеру очередной платы Windows добросовестно присвоит плате новый номер COM-
+порта, что каждый раз влечет за собой изменение установок номера COM-порта в программе, которая
+работает с изделием.
+
+В таком случае, можно запретить Windows назначать новые номера портов для изделий с микросхемой
+CP2104. Это делается добавлением в реестр Windows следующей строки:
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\UsbFlags\IgnoreHWSerNum10C4EA60
+Для этого нужно кликнуть правой кнопкой мыши на папке “usbflags” и выбрать New-> Binary Key.
+Затем изменить имя строки на IgnoreHWSerNum10C4EA60 и установить значение параметра Binary Key 1
+	Замечание: рекомендуется использовать предложенный метод на компьютерах с портами USB 2.0.
+Метод может не работать на компьютерах с портами USB3, особенно, если USB3 не встроен в чипсет, а
+реализован на выделенном контроллере.
+Источник: https://docviewer.yandex.ru/view/120675444/?page=2&*=z9pbguGheOPL7okhY1T34IA4Ik97InVybCI6Imh0dHBzOi8vd3d3LmFzLWtpdC5ydS9kb2NzLXBkZi9BU0lTUC9BU3hFX0NPTS1wb3J0X3NldHRpbmcucGRmIiwidGl0bGUiOiJBU3hFX0NPTS1wb3J0X3NldHRpbmcucGRmIiwibm9pZnJhbWUiOnRydWUsInVpZCI6IjEyMDY3NTQ0NCIsInRzIjoxNTY4MzY2NzY0MzczLCJ5dSI6IjM3MzEzMzM0MzE1NTQwMTIyMjgiLCJzZXJwUGFyYW1zIjoibGFuZz1ydSZ0bT0xNTY4MzY2NjIxJnRsZD1ydSZuYW1lPUFTeEVfQ09NLXBvcnRfc2V0dGluZy5wZGYmdGV4dD1DUDIxMDQrQ1AyMTAyKyVEMCVCRSVEMSU4MiVEMCVCQiVEMCVCOCVEMSU4NyVEMCVCOCVEMSU4RiZ1cmw9aHR0cHMlM0EvL3d3dy5hcy1raXQucnUvZG9jcy1wZGYvQVNJU1AvQVN4RV9DT00tcG9ydF9zZXR0aW5nLnBkZiZscj05NjkmbWltZT1wZGYmbDEwbj1ydSZzaWduPTIyOTZlZjQ2YzEyMDU1NDFjNTA0MjdkM2Y4NTYxZTIyJmtleW5vPTAifQ%3D%3D&lang=ru
+
+
 19:24 20.11.2019
 Плата MORO2020v22 с исправлениями:
 в цепь VDDUSB врезан диод
@@ -111,3 +131,4 @@ USB                           - ОК
 Ошибка разводки ACS712 (земля)
 Пробный заряд                 - ОК
 
+8:39 24.01.2020

@@ -208,9 +208,13 @@ void MBoard::setDischargeAmp( float ampers ) { ledcWrite( ch_discharge, ampers *
 // Квадратичная регрессия   y=−0.02797536x^2 +58.56353881x+5.21770470    0.4%
 uint16_t MBoard::pwm( float ampers ) 
 { 
-    uint16_t iPvm = (uint16_t)( ampers * ampers * -0.02797536f + 58.56353881f * ampers + 5.21770470f );
+    #ifdef v43    // +38 - компенсация смещения для измерителя INORM3
+        uint16_t iPvm = (uint16_t)( ampers * ampers * -0.02797536f + 58.56353881f * ampers + 5.21770470f  + 38);
+    
 //        uint16_t iPvm = 335 ; //  Test V43
-
+    #else
+        uint16_t iPvm = (uint16_t)( ampers * ampers * -0.02797536f + 58.56353881f * ampers + 5.21770470f );
+    #endif
     return iPvm; 
 }
 

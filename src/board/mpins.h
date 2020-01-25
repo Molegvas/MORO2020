@@ -7,11 +7,11 @@ namespace MPins
 {
 #ifdef V43      // Проект MORO2020 с цветным tft дисплеем 1.8" 128*160
     // Аналоговые входы
-    constexpr uint8_t pinI          = 33; //  an        OUT_IF      Порт измерителя тока заряда и разряда
+    constexpr uint8_t pinI          = 33; //  an        OUT_IF      Порт измерителя тока заряда и разряда   33
     constexpr uint8_t pinV          = 34; //  an        UOUTIZM     Порт измерителя напряжения
     constexpr uint8_t pinT          = 32; //  an        RTU         Порт измерителя температуры
     constexpr uint8_t pinK          = 35; //  an        KEY         Порт выбора кнопок
-    constexpr uint8_t pinI3         = 39; //  an(SVN)   INORM       Порт измерителя малых токов заряда
+    constexpr uint8_t pinI3         = 39; //  an(SVN)   INORM       Порт измерителя малых токов заряда      39
 
     // Выходы с ШИМ
     constexpr uint8_t pwm_i_pin     = 26; //  pwm       IPWM        Порт управления ШИМ тока

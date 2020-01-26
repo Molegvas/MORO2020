@@ -26,9 +26,10 @@
 #ifdef STORAGE_ENABLE
   #include "modes/storagefsm.h"
 #endif
-//#ifdef SERVICE_ENABLE
-  #include "modes/servicefsm.h"
-//#endif
+#ifdef PRODUCT_ENABLE
+  #include "modes/productfsm.h"
+#endif
+#include "modes/servicefsm.h"
 #include "Arduino.h"
 
 
@@ -141,14 +142,17 @@ void MDispatcher::run()
           break;
       #endif
 
-//      #ifdef SERVICE_ENABLE
+      #ifdef PRODUCT_ENABLE
+        case PRODUCT:
+          State = new ProductFsm::MStart(Tools);
+          break;
+      #endif 
+
         case SERVICE:
           State = new ServiceFsm::MInvitation(Tools);
           break;
-//      #endif
-
         default:
-          break;
+        break;
       }
     } // !B_CLICK
   }
@@ -189,11 +193,13 @@ void MDispatcher::showMode(int mode)
     case STORAGE:     s = "    Хранение    "; break;
   #endif
 
-////  #ifdef SERVICE_ENABLE
-    case SERVICE:     s = "   Сервис АКБ   "; break;
-//  #endif
+  #ifdef PRODUCT_ENABLE
+    case PRODUCT:     s = "  Регулировки   "; break;
+  #endif 
 
-    default:          s = "  error  "; break;
+    case SERVICE:     s = "   Сервис АКБ   "; break;
+
+    default:          s = "  error         "; break;
   }
   Oled->showLine2Text(s);
 }

@@ -31,9 +31,12 @@ class MDispatcher
       RECOVERY,   // режим восстановления
     #endif
     #ifdef STORAGE_ENABLE
-      STORAGE,    // режим хранения
+      STORAGE,                // режим хранения
     #endif
-      SERVICE     // режим Сервис АКБ
+    #ifdef PRODUCT_ENABLE
+      PRODUCT,                // режим заводских регулировок
+    #endif
+      SERVICE                 // режим Сервис АКБ
     };
 
   public:

@@ -33,8 +33,8 @@ class MDispatcher
     #ifdef STORAGE_ENABLE
       STORAGE,                // режим хранения
     #endif
-    #ifdef PRODUCT_ENABLE
-      PRODUCT,                // режим заводских регулировок
+    #ifdef DEVICE_ENABLE
+      DEVICE,                // режим заводских регулировок
     #endif
       SERVICE                 // режим Сервис АКБ
     };

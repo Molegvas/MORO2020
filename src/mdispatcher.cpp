@@ -26,8 +26,8 @@
 #ifdef STORAGE_ENABLE
   #include "modes/storagefsm.h"
 #endif
-#ifdef PRODUCT_ENABLE
-  #include "modes/productfsm.h"
+#ifdef DEVICE_ENABLE
+  #include "modes/devicefsm.h"
 #endif
 #include "modes/servicefsm.h"
 #include "Arduino.h"
@@ -142,9 +142,9 @@ void MDispatcher::run()
           break;
       #endif
 
-      #ifdef PRODUCT_ENABLE
-        case PRODUCT:
-          State = new ProductFsm::MStart(Tools);
+      #ifdef DEVICE_ENABLE
+        case DEVICE:
+          State = new DeviceFsm::MStart(Tools);
           break;
       #endif 
 
@@ -193,8 +193,8 @@ void MDispatcher::showMode(int mode)
     case STORAGE:     s = "    Хранение    "; break;
   #endif
 
-  #ifdef PRODUCT_ENABLE
-    case PRODUCT:     s = "  Регулировки   "; break;
+  #ifdef DEVICE_ENABLE
+    case DEVICE:      s = "  Регулировки   "; break;
   #endif 
 
     case SERVICE:     s = "   Сервис АКБ   "; break;

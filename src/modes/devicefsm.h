@@ -1,33 +1,21 @@
-#ifndef _PRODUCTFSM_H_
-#define _PRODUCTFSM_H_
+#ifndef _DEVICEFSM_H_
+#define _DEVICEFSM_H_
 
 #include "mstate.h"
 
-namespace ProductFsm
+namespace DeviceFsm
 {
-    struct MChConsts
+    struct MDcConsts
     {
-        // Параметры условий заряда (здесь – для батарей типа AGM)
-        static constexpr float voltageMaxFactor     = 1.234f;    // 12v  * 1.234 = 14.8v
-        static constexpr float voltageMinFactor     = 0.890f;    // 12v  * 0.89  = 10.7v
-        static constexpr float currentMaxFactor     = 0.200f;    // 55ah * 0.1   = 5,5A 
-        static constexpr float currentMinFactor     = 0.050f;    // 55ah * 0.05  = 2.75A
-    };
+        // Параметры условий регулировки DC источника заряда и разрядной цепи
+        static constexpr int vPwm_l     =    0;     // Предел регулирования снизу
+        static constexpr int vPwm_h     = 1024;     // Предел регулирования сверху
+        
+        static constexpr int iPwm_l     =    0;     // 
+        static constexpr int iPwm_h     = 1024;     //
 
-    //pid settings and gains
-    struct MPidConstants
-    {
-
-        // Параметры регулирования
-        static constexpr float outputMin            = 0.0f;
-        static constexpr float outputMaxFactor      = 1.05f;     // factor for current limit
-        static constexpr float bangMin              = 20.0f;     // За пределами, - отключить
-        static constexpr float bangMax              = 20.0f;
-        static constexpr unsigned long timeStep     = 100;
-        // Подобранные значения для ПИД, фаза подъёма тока и далее, если в последующих фазах эти настройки будут устраивать
-        static constexpr float k_p                  = 0.13f;
-        static constexpr float k_i                  = 0.10f;
-        static constexpr float k_d                  = 0.04f;
+        static constexpr int rPwm_l     =    0;     // r - реверсный ток (разряд) 
+        static constexpr int rPwm_h     = 1024;     // 
     };
 
     class MStart : public MState
@@ -37,12 +25,36 @@ namespace ProductFsm
             virtual MState * fsm() override;
     };
 
-    // class MSetFactory : public MState
-    // {
-    //     public:
-    //         MSetFactory(MTools * Tools);
-    //         virtual MState * fsm() override;
-    // };
+    class MSetVoltagePwmMin : public MState
+    {
+        public:
+            MSetVoltagePwmMin(MTools * Tools);
+            virtual MState * fsm() override;
+    };
+
+    class MSetVoltagePwmMax : public MState
+    {
+        public:
+            MSetVoltagePwmMax(MTools * Tools);
+            virtual MState * fsm() override;
+    };
+
+    class MSetVoltagePwmDelta : public MState
+    {
+        public:
+            MSetVoltagePwmDelta(MTools * Tools);
+            virtual MState * fsm() override;
+    };
+
+    class MVoltageExe : public MState
+    {
+        public:
+            MVoltageExe(MTools * Tools);
+            virtual MState * fsm() override;
+    };
+
+
+
 
     class MChargeCurrent : public MState
     {
@@ -108,4 +120,4 @@ namespace ProductFsm
     };
 };
 
-#endif  // !_PRODUCTFSM_H_
+#endif  // !_DEVICEFSM_H_

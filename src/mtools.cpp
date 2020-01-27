@@ -713,8 +713,18 @@ void MTools::decPause()
     Oled->showLine3Delay( pause ); 
 }
 
-
-
+int MTools::incNum( int v, int h, int d )
+{
+    v += d;
+    if (v >= h) return h;
+    else        return v;
+}
+int MTools::decNum( int v, int l, int d )
+{
+    v -= d;
+    if (v <= l) return l;
+    else        return v;
+}
 
 // inc, dec 201905
 float MTools::incFloatValue( float value,  float value_l, float value_h, float delta ) {

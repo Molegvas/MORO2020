@@ -25,6 +25,13 @@ namespace DeviceFsm
             virtual MState * fsm() override;
     };
 
+    class MSetVoltagePwmDelta : public MState
+    {
+        public:
+            MSetVoltagePwmDelta(MTools * Tools);
+            virtual MState * fsm() override;
+    };
+
     class MSetVoltagePwmMin : public MState
     {
         public:
@@ -39,17 +46,10 @@ namespace DeviceFsm
             virtual MState * fsm() override;
     };
 
-    class MSetVoltagePwmDelta : public MState
+    class MVoltagePwmExe : public MState
     {
         public:
-            MSetVoltagePwmDelta(MTools * Tools);
-            virtual MState * fsm() override;
-    };
-
-    class MVoltageExe : public MState
-    {
-        public:
-            MVoltageExe(MTools * Tools);
+            MVoltagePwmExe(MTools * Tools);
             virtual MState * fsm() override;
     };
 

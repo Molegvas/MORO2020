@@ -199,6 +199,10 @@ class MTools
     void incPause();
     void decPause();
 
+    int   incNum( int v, int h, int d );
+    int   decNum( int v, int l, int d );
+
+
 // inc, dec 201905
     float incFloatValue( float value,  float value_l, float value_h, float delta ); 
     float decFloatValue( float value,  float value_l, float value_h, float delta );
@@ -475,6 +479,8 @@ private:
     float decfValue( float value, float min, float max, float delta, bool way );
     int   inciValue( int value,  int min, int max, int delta );
     int   deciValue( int value,  int min, int max, int delta );
+
+
 
     // Power
     const int number_of_powers = 6;

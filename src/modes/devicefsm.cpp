@@ -48,16 +48,16 @@ namespace DeviceFsm
             Serial.print("voltagePwmMax= ");        Serial.println( voltagePwmMax );
             Serial.print("voltagePwm= ");           Serial.println( voltagePwm );
             Serial.print("voltageDeltaPwm= ");      Serial.println( voltageDeltaPwm );
-            
-            Serial.print("currentPwm= ");           Serial.println( currentPwm );
-            Serial.print("currentDeltaPwm= ");      Serial.println( currentDeltaPwm );
-            Serial.print("dischargePwm= ");         Serial.println( dischargePwm );
-            Serial.print("dischargeDeltaPwm= ");    Serial.println( dischargeDeltaPwm );
+
+            // Serial.print("currentPwm= ");           Serial.println( currentPwm );
+            // Serial.print("currentDeltaPwm= ");      Serial.println( currentDeltaPwm );
+            // Serial.print("dischargePwm= ");         Serial.println( dischargePwm );
+            // Serial.print("dischargeDeltaPwm= ");    Serial.println( dischargeDeltaPwm );
         #endif
 
         // Индикация
         #ifdef OLED_1_3
-            Oled->showLine4Text(" Set Voltage ");
+            Oled->showLine4Text(" PWM Voltage ");
             // Oled->showLine3Akb( Tools->getVoltageNom(), Tools->getCapacity() );              // example: "  12В  55Ач  "
             Oled->showLine3Text("             ");
             Oled->showLine2Text(" P-след,B-выбор ");        // Подсказка: активны две кнопки: P-следующий, и B-выбор
@@ -87,13 +87,58 @@ namespace DeviceFsm
             case MKeyboard::P_CLICK :
                 // Продолжение выбора объекта настройки
                 return new MSetVoltagePwmMin(Tools);
-            break;
+    //        break;
             case MKeyboard::B_CLICK :
-            //     return new MSetVoltage(Tools);      // Выбрана регулировка напряжения.
+                return new MSetVoltagePwmDelta(Tools);      // Выбрана регулировка voltageDeltaPwm
             break;
             default:
             break;
         }
+
+        return this;
+    };
+
+    // Коррекция шага приращения pwm для регулировки напряжения.
+    MSetVoltagePwmDelta::MSetVoltagePwmDelta(MTools * Tools) : MState(Tools)
+    {
+        // Индикация
+        Oled->showLine4Text("  Vpwm delta ");
+        Oled->showLine3Num( voltageDeltaPwm );
+        Tools->showUpDn(); // " UP/DN, В-выбор "
+    }
+    MState * MSetVoltagePwmDelta::fsm()
+    {
+        switch ( Keyboard->getKey() )
+        {
+            case MKeyboard::C_LONG_CLICK :                  // Отказ от продолжения ввода параметров - стоп
+                return new MStop(Tools);
+            case MKeyboard::C_CLICK :
+                return new MVoltagePwmExe(Tools);
+    //break;
+            case MKeyboard::P_CLICK :                       // Продолжение выбора объекта настройки
+                return new MSetVoltagePwmMin(Tools);
+    //break;
+            case MKeyboard::B_CLICK :                       // Сохранить и перейти к следующему параметру
+                Tools->saveInt( "dc", "vd_pwm", voltageDeltaPwm ); 
+                return new MSetVoltagePwmMin(Tools);
+    //break;
+            case MKeyboard::UP_CLICK :
+                voltageDeltaPwm = Tools->incNum( voltageDeltaPwm, MDcConsts::vPwm_h, 1 );
+                break;
+            case MKeyboard::DN_CLICK :
+                voltageDeltaPwm = Tools->decNum( voltageDeltaPwm, MDcConsts::vPwm_l, 1 );
+                break;
+            case MKeyboard::UP_AUTO_CLICK:
+                voltageDeltaPwm = Tools->incNum( voltageDeltaPwm, MDcConsts::vPwm_h, 8 );
+                break;
+            case MKeyboard::DN_AUTO_CLICK :
+                voltageDeltaPwm = Tools->decNum( voltageDeltaPwm, MDcConsts::vPwm_l, 8 );
+                break;
+            default:;
+        }
+        #ifdef OLED_1_3
+            Oled->showLine3Num( voltageDeltaPwm );
+        #endif
 
         return this;
     };
@@ -103,7 +148,7 @@ namespace DeviceFsm
     {
         // Индикация
         Oled->showLine4Text("   Vpwm min  ");
-        Oled->showLine3Num( voltagePwm );
+        Oled->showLine3Num( voltagePwmMin );
         Tools->showUpDn(); // " UP/DN, В-выбор "
     }
     MState * MSetVoltagePwmMin::fsm()
@@ -112,34 +157,126 @@ namespace DeviceFsm
         {
             case MKeyboard::C_LONG_CLICK :                  // Отказ от продолжения ввода параметров - стоп
                 return new MStop(Tools);
+            case MKeyboard::C_CLICK :
+                return new MVoltagePwmExe(Tools);
+    //break;
             case MKeyboard::P_CLICK :                       // Продолжение выбора объекта настройки
-                //return new MSetVoltageMax(Tools);
-    break;
-            // case MKeyboard::B_CLICK :                       // Сохранить и перейти к следующему параметру
-            //     Tools->saveInt( "dc", "v_pwm_l", Tools->getVoltageMax() ); 
-            //     return new MSetCurrentMin(Tools);
-
-            // case MKeyboard::UP_CLICK :
-            //     Tools->incVoltageMax( 0.1f, false );        // По кольцу? - Нет
-            //     break;
-            // case MKeyboard::DN_CLICK:
-            //     Tools->decVoltageMax( 0.1f, false );
-            //     break;
-            // case MKeyboard::UP_AUTO_CLICK:
-            //     Tools->incVoltageMax( 0.1f, false );
-            //     break;
-            // case MKeyboard::DN_AUTO_CLICK:
-            //     Tools->decVoltageMax( 0.1f, false );
-            //     break;
+                return new MSetVoltagePwmMax(Tools);
+    //break;
+            case MKeyboard::B_CLICK :                       // Сохранить и перейти к следующему параметру
+                Tools->saveInt( "dc", "v_pwm_l", voltagePwmMin ); 
+                return new MSetVoltagePwmMax(Tools);
+    //break;
+            case MKeyboard::UP_CLICK :
+                voltagePwmMin = Tools->incNum( voltagePwmMin, MDcConsts::vPwm_h, 1 );
+                break;
+            case MKeyboard::DN_CLICK :
+                voltagePwmMin = Tools->decNum( voltagePwmMin, MDcConsts::vPwm_l, 1 );
+                break;
+            case MKeyboard::UP_AUTO_CLICK:
+                voltagePwmMin = Tools->incNum( voltagePwmMin, MDcConsts::vPwm_h, voltageDeltaPwm );
+                break;
+            case MKeyboard::DN_AUTO_CLICK :
+                voltagePwmMin = Tools->decNum( voltagePwmMin, MDcConsts::vPwm_l, voltageDeltaPwm );
+                break;
             default:;
         }
         #ifdef OLED_1_3
-            //Oled->showLine3MaxU( Tools->getVoltageMax() );
+            Oled->showLine3Num( voltagePwmMin );
         #endif
 
         return this;
     };
 
+    // Коррекция pwm для максимального напряжения.
+    MSetVoltagePwmMax::MSetVoltagePwmMax(MTools * Tools) : MState(Tools)
+    {
+        // Индикация
+        Oled->showLine4Text("   Vpwm max  ");
+        Oled->showLine3Num( voltagePwmMax );
+        Tools->showUpDn(); // " UP/DN, В-выбор "
+    }
+    MState * MSetVoltagePwmMax::fsm()
+    {
+        switch ( Keyboard->getKey() )
+        {
+            case MKeyboard::C_LONG_CLICK :                  // Отказ от продолжения ввода параметров - стоп
+                return new MStop(Tools);
+            case MKeyboard::C_CLICK :
+                return new MVoltagePwmExe(Tools);
+    //break;
+            case MKeyboard::P_CLICK :                       // Продолжение выбора объекта настройки
+                //return new MSetVoltagePwmMax(Tools);
+    break;
+            case MKeyboard::B_CLICK :                       // Сохранить и перейти к следующему параметру
+                Tools->saveInt( "dc", "v_pwm_h", voltagePwmMax ); 
+                return new MVoltagePwmExe(Tools);           // Выполнять
+    //break;
+            case MKeyboard::UP_CLICK :
+                voltagePwmMax = Tools->incNum( voltagePwmMax, MDcConsts::vPwm_h, 1 );
+                break;
+            case MKeyboard::DN_CLICK :
+                voltagePwmMax = Tools->decNum( voltagePwmMax, MDcConsts::vPwm_l, 1 );
+                break;
+            case MKeyboard::UP_AUTO_CLICK:
+                voltagePwmMax = Tools->incNum( voltagePwmMax, MDcConsts::vPwm_h, voltageDeltaPwm );
+                break;
+            case MKeyboard::DN_AUTO_CLICK :
+                voltagePwmMax = Tools->decNum( voltagePwmMax, MDcConsts::vPwm_l, voltageDeltaPwm );
+                break;
+            default:;
+        }
+        #ifdef OLED_1_3
+            Oled->showLine3Num( voltagePwmMax );
+        #endif
+
+        return this;
+    };
+
+    // Регулировка DC источника по напряжению.
+    MVoltagePwmExe::MVoltagePwmExe(MTools * Tools) : MState(Tools)
+    {
+        // Индикация
+        Oled->showLine4Text("   Vpwm exe  ");
+        Oled->showLine3Num( voltagePwm );
+        Tools->showUpDn(); // " UP/DN, В-выбор "
+    }
+    MState * MVoltagePwmExe::fsm()
+    {
+        switch ( Keyboard->getKey() )
+        {
+            case MKeyboard::C_LONG_CLICK :                  // Отказ от продолжения ввода параметров - стоп
+                return new MStop(Tools);
+            case MKeyboard::C_CLICK :
+                //return new MVoltageExe(Tools);        // Next step
+    break;
+            case MKeyboard::P_CLICK :                       // Продолжение выбора объекта настройки
+                //return new MSetVoltagePwmMax(Tools);
+    break;
+    //         case MKeyboard::B_CLICK :                       // Сохранить и перейти к следующему параметру
+    //             Tools->saveInt( "dc", "v_pwm_h", voltagePwmMax ); 
+    //             //return new MSetVoltagePwmMax(Tools);
+    // break;
+    //         case MKeyboard::UP_CLICK :
+    //             voltagePwmMax = Tools->incNum( voltagePwmMax, MDcConsts::vPwm_h, 1 );
+    //             break;
+    //         case MKeyboard::DN_CLICK :
+    //             voltagePwmMax = Tools->decNum( voltagePwmMax, MDcConsts::vPwm_l, 1 );
+    //             break;
+    //         case MKeyboard::UP_AUTO_CLICK:
+    //             voltagePwmMax = Tools->incNum( voltagePwmMax, MDcConsts::vPwm_h, voltageDeltaPwm );
+    //             break;
+    //         case MKeyboard::DN_AUTO_CLICK :
+    //             voltagePwmMax = Tools->decNum( voltagePwmMax, MDcConsts::vPwm_l, voltageDeltaPwm );
+    //             break;
+            default:;
+        }
+        #ifdef OLED_1_3
+            Oled->showLine3Num( voltagePwm );
+        #endif
+
+        return this;
+    };
 
 
 

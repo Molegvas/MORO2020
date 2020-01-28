@@ -54,7 +54,7 @@ namespace DeviceFsm
     };
 
 
-
+//=================================================
 
     class MChargeCurrent : public MState
     {
@@ -111,7 +111,9 @@ namespace DeviceFsm
     //         MKeepVmin(MTools * Tools);
     //         virtual MState * fsm() override;
     // };
-  
+
+//=================================================
+ 
     class MStop : public MState
     {
         public:  

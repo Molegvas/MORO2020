@@ -124,6 +124,10 @@ class MBoard
     void setVoltageVolt( float volts );
     void setDischargeAmp( float ampers );
 
+    void setCurrentPwm( int pwm );
+    void setVoltagePwm( int pwm );
+    void setDischargePwm( int pwm );
+
 //    int  getFanPwm();
 
     void setRangeV(int range);

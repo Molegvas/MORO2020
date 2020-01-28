@@ -228,6 +228,13 @@ void MBoard::setVoltageVolt( float volts ) { ledcWrite( ch_voltage, volts  * 52.
 
 void MBoard::setDischargeAmp( float ampers ) { ledcWrite( ch_discharge, ampers * 300.0f ); }   // от 0,3 до 3,4А
 
+void MBoard::setCurrentPwm( int pwm )   { ledcWrite( ch_current,   pwm ); }
+void MBoard::setVoltagePwm( int pwm )   { ledcWrite( ch_voltage,   pwm ); }
+void MBoard::setDischargePwm( int pwm ) { ledcWrite( ch_discharge, pwm ); }
+
+
+
+
 // Линейная регрессия       y=58.39108942x+5.36189996                    0.5%
 // Квадратичная регрессия   y=−0.02797536x^2 +58.56353881x+5.21770470    0.4%
 uint16_t MBoard::pwm( float ampers ) 

@@ -1637,7 +1637,7 @@ void MTools::activateChargePh3()
 }
 
 
-void MTools::shutdown() {
+void MTools::shutdownDC() {
     Board->setCurrentAmp( 0.0 );
     Board->setVoltageVolt( 0.0 );
     Board->setDischargeAmp( 0.0 );
@@ -1661,7 +1661,7 @@ void MTools::shutdownCharge()
     // Board->powOff();
     // Board->swOff();
     // Board->ledsOff();
-    shutdown();
+    shutdownDC();
     #ifdef V22
         Board->ledROn();
     #endif

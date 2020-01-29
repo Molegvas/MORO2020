@@ -34,7 +34,7 @@ namespace PulseGenFsm
           Oled->showLine2Text(" P-корр.С-старт ");        // Активны две кнопки: P-сменить настройки, и C-старт
           Oled->showLine1Time(0);                         // уточнить
           Oled->showLine1Ah(0.0);                         // уточнить
-    Tools->shutdown();
+    Tools->shutdownDC();
           #ifdef V22
             Board->ledsOn();                                // Светодиод светится белым до старта - режим выбран
           #endif

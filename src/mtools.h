@@ -338,7 +338,7 @@ class MTools
     void runChargePh2();
     void activateChargePh3();
     
-    void shutdown();
+    void shutdownDC();
     void shutdownCharge();
 
     void chargeCalculations();

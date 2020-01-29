@@ -46,6 +46,8 @@ void MOled::resetLCD()
 
 // Line 4 show
 void MOled::showLine4RealVoltage() { modeLine4 = m_work; }                                      // Отображать текущее напряжение
+void MOled::showLine4RealCurrent() { modeLine4 = m_current; }                                      // Отображать текущее напряжение
+
 void MOled::showLine4Text(String s) { line4 = s;    modeLine4 = m_text; }                       // Выводить текст
 
 // Line 3 show
@@ -93,6 +95,12 @@ void MOled::runDisplay(float _voltage, float _current, float _celsius, int _char
                 else            { ( _voltage < -10.0f) ? U8g2->setCursor(35, 13) : U8g2->setCursor(45, 13); }
                 U8g2->print( _voltage, 2);    U8g2->print(" В");
 
+            break;
+
+            case m_current:
+                //U8g2->setCursor(0, 13);
+                ( (_current < 0.0f) || (_current >= 10.0f) ) ? U8g2->setCursor(45, 13) : U8g2->setCursor(55, 13);
+                U8g2->print( _current, 1);    U8g2->print(" А"); 
             break;
 
             case m_text:

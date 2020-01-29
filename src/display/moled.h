@@ -14,6 +14,7 @@ class MOled
     void resetLCD();
     void runDisplay(float u, float i, float celsius, int time, float ah, bool ap);
     void showLine4RealVoltage();
+    void showLine4RealCurrent();
     void showLine4Text(String s = "             ");
     void showLine3RealCurrent();
     void showLine3Text(String s = "             ");

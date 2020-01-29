@@ -1,3 +1,9 @@
+/*
+  Надо будет попробовать http://forum.amperka.ru/threads/Хаос-в-значениях-АЦП-esp32.19985/
+
+*/
+
+
 #include "board/mboard.h"
 #include "board/mpins.h"
 #include "display/moled.h"
@@ -161,17 +167,18 @@ void MBoard::initPorts() {
   void MBoard::blinkYellow()  { if(Oled->blink()) {ledROn(); ledGOn();} else ledsOff(); }
 #endif
 
-
+// Формула предложена 
+// https://github.com/G6EJD/ESP32-ADC-Accuracy-Improvement-function/blob/master/ESP32_ADC_Read_Voltage_Accurate.ino
 float MBoard::readVoltage( int reading )
 {
   // Reference voltage is 3v3 = 4095 in range 0 to 4095
   if ( reading < 1 || reading >= 4095 ) return 0;
   const float reading2 = reading  * reading;
   const float reading3 = reading2 * reading;
-  return -0.000000000000016f * reading3 * reading     //(float)pow( reading, 4 )
-        + 0.000000000118171f * reading3       //(float)pow( reading, 3 ) 
-        - 0.000000301211691f * reading2     //(float)pow( reading, 2 ) 
-        + 0.001109019271794f * reading              //(float)reading
+  return -0.000000000000016f * reading3 * reading
+        + 0.000000000118171f * reading3
+        - 0.000000301211691f * reading2
+        + 0.001109019271794f * reading
         + 0.034143524634089f;
 }
 

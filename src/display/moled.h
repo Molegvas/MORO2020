@@ -3,7 +3,12 @@
 
 #include <Arduino.h>
 
-class U8G2_SSD1309_128X64_NONAME2_F_4W_SW_SPI;
+
+#ifdef HW_HSPI
+  class U8G2_SSD1309_128X64_NONAME2_F_4W_HW_SPI;
+#else
+  class U8G2_SSD1309_128X64_NONAME2_F_4W_SW_SPI;
+#endif
 
 class MOled
 {
@@ -39,8 +44,11 @@ class MOled
     bool blink();
 
   private:
-    U8G2_SSD1309_128X64_NONAME2_F_4W_SW_SPI * U8g2 = nullptr;
-
+    #ifdef HW_HSPI
+      U8G2_SSD1309_128X64_NONAME2_F_4W_HW_SPI * U8g2 = nullptr;  
+    #else
+      U8G2_SSD1309_128X64_NONAME2_F_4W_SW_SPI * U8g2 = nullptr;
+    #endif
     enum show_mode { m_work, m_text, m_akb, m_max_i, m_max_u, m_delay,
                      m_number, m_power, m_voltage, m_current, m_time,
                      m_celsius, m_ah, m_heap, m_capacity, m_sec, m_avr_curr };

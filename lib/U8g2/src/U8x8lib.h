@@ -54,7 +54,7 @@
 
 
 /* Assumption: All Arduino Boards have "SPI.h" */
-//#define U8X8_HAVE_HW_SPI	// -moro
+#define U8X8_HAVE_HW_SPI	//  - -moro
 
 /* Assumption: All Arduino Boards have "Wire.h" */
 #define U8X8_HAVE_HW_I2C

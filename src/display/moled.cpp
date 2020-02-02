@@ -14,6 +14,10 @@
 #include "board/mpins.h"
 #include <Arduino.h>
 
+//m
+//#include <SPI.h>
+//SPIClass * hspi = NULL;
+
 MOled::MOled()
 {
     // The complete list is available here: https://github.com/olikraus/u8g2/wiki/u8g2setupcpp
@@ -22,11 +26,21 @@ MOled::MOled()
 #endif
 
 #ifdef V43
-    U8g2 = new U8G2_SSD1309_128X64_NONAME2_F_4W_SW_SPI( U8G2_R2, MPins::scl_pin,
-                                                                 MPins::sda_pin,
-                                                                 MPins::cs_pin,
-                                                                 MPins::dc_pin,
-                                                                 MPins::res_pin);  // 
+    #ifdef HW_HSPI
+
+        //hspi = new SPIClass(HSPI);
+        //hspi->begin();
+
+        U8g2 = new U8G2_SSD1309_128X64_NONAME2_F_4W_HW_SPI (U8G2_R2, MPins::cs_pin,
+                                                                     MPins::dc_pin,
+                                                                     MPins::res_pin);  
+    #else
+        U8g2 = new U8G2_SSD1309_128X64_NONAME2_F_4W_SW_SPI( U8G2_R2, MPins::scl_pin,
+                                                                     MPins::sda_pin,
+                                                                     MPins::cs_pin,
+                                                                     MPins::dc_pin,
+                                                                     MPins::res_pin);
+    #endif
 #endif
 
     resetLCD();

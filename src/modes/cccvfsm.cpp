@@ -307,7 +307,7 @@ namespace CcCvFsm
                 return new MStop(Tools);
             default:;
         }
-        #ifndef OLED_1_3
+        #ifdef V22
             Board->blinkWhite();           // Мигать белым – время пошло.
         #endif
         return this;

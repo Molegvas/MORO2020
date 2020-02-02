@@ -62,14 +62,14 @@ void connectTask( void * parameter ) {
 void displayTask( void * parameter ) {
   while(true)
   {
-    //unsigned long start = millis();
+    unsigned long start = millis();
     Oled->runDisplay( Board->getVoltage(), 
                       Board->getCurrent(), 
                       Board->Overseer->getCelsius(),
                       Tools->getChargeTimeCounter(),
                       Tools->getAhCharge(), 
                       Tools->getAP() );
-    //Serial.print("Display: Core "); Serial.print(xPortGetCoreID()); Serial.print(" Time = "); Serial.print(millis() - start); Serial.println(" mS");
+    Serial.print("Display: Core "); Serial.print(xPortGetCoreID()); Serial.print(" Time = "); Serial.print(millis() - start); Serial.println(" mS");
     // Core 1, Time = 47...53 mS
     vTaskDelay( 250 / portTICK_PERIOD_MS );
   }
